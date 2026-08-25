@@ -17,7 +17,16 @@ const FRAME_SCALE = DEVICE_H / (CUTOUT.y1 - CUTOUT.y0);
 const FRAME_W = SOURCE_W * FRAME_SCALE;
 const FRAME_H = SOURCE_H * FRAME_SCALE;
 const SCREEN_LEFT = CUTOUT.x0 * FRAME_SCALE - (DEVICE_W - (CUTOUT.x1 - CUTOUT.x0) * FRAME_SCALE) / 2;
-const SCREEN_TOP = CUTOUT.y0 * FRAME_SCALE - 1;
+// The app content box and the mockup's transparent cutout are two
+// independently-rounded shapes computed from the same measurements, so a
+// sub-pixel mismatch between them is unavoidable. Bleeding the content box a
+// few px past the cutout on every edge guarantees it's always the opaque
+// bezel — not the page background — that wins at the seam, instead of a
+// hairline gap that happened to be invisible against the old dark page
+// background but shows up clearly against a light one.
+const EDGE_BLEED = 3;
+const SCREEN_TOP = CUTOUT.y0 * FRAME_SCALE - 1 - EDGE_BLEED;
+const RENDER_H = DEVICE_H + EDGE_BLEED * 2;
 const SAFE_MARGIN = 32;
 
 type PhoneFrameProps = {
@@ -64,7 +73,7 @@ export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: Pho
               top: SCREEN_TOP,
               left: SCREEN_LEFT,
               width: DEVICE_W,
-              height: DEVICE_H,
+              height: RENDER_H,
             }}
           >
             {children}
