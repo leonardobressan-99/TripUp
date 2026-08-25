@@ -66,9 +66,15 @@ export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: Pho
         }}
       >
         <div className="relative" style={{ width: FRAME_W, height: FRAME_H }}>
-          {/* screen */}
+          {/* screen — rounded at 46px, deliberately less than the mockup
+              cutout's own measured ~52px corner radius. The visible shape is
+              always whichever radius is SMALLER (the other one just clips
+              nothing extra), so keeping this one smaller guarantees the
+              content box fully covers the cutout's rounded corners with a
+              safety margin, rather than risking a gap if the two radii
+              don't match exactly. */}
           <div
-            className="absolute overflow-hidden rounded-[54px] bg-cream"
+            className="absolute overflow-hidden rounded-[46px] bg-cream"
             style={{
               top: SCREEN_TOP,
               left: SCREEN_LEFT,
