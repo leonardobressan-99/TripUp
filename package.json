@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:site": "tsc -b && vite build --outDir dist/app --base /app/ && mkdir -p dist && cp -R landing/. dist/"
   },
   "dependencies": {
     "clsx": "^2.1.1",

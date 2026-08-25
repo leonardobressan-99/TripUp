@@ -238,8 +238,8 @@ export default function Home({
               };
               const cardVariants = {
                 hidden: { opacity: 0, y: 28 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeInOut" } },
-                exit: { opacity: 0, y: 28, transition: { duration: 0.35, ease: "easeInOut" } },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeInOut" as const } },
+                exit: { opacity: 0, y: 28, transition: { duration: 0.35, ease: "easeInOut" as const } },
               };
               return (
                 <motion.div

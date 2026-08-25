@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TripUp</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path d=%22M20 4L4 11.5L11 13L13 20L20 4Z%22 fill=%22%230EA5A0%22/></svg>">
+<style>
+@font-face {
+  font-family: "Fraunces";
+  src: url("fonts/Fraunces_144pt_Soft-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Nexa Text";
+  src: url("fonts/NexaTextRegular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Nexa Text";
+  src: url("fonts/NexaTextBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --cream: #faf6ee;
+  --ink: #1c2541;
+  --ink-soft: #64698a;
+  --teal: #0ea5a0;
+  --teal-deep: #0a7a76;
+  --line: rgba(28, 37, 65, 0.14);
+  --surface: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream: #14171f;
+    --ink: #f3f0e8;
+    --ink-soft: #a7abc0;
+    --line: rgba(243, 240, 232, 0.16);
+    --surface: #1c2030;
+  }
+}
+:root[data-theme="dark"] {
+  --cream: #14171f;
+  --ink: #f3f0e8;
+  --ink-soft: #a7abc0;
+  --line: rgba(243, 240, 232, 0.16);
+  --surface: #1c2030;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: "Nexa Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.card {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+
+.mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  box-shadow: 0 8px 20px rgba(28, 37, 65, 0.08);
+}
+.mark svg { width: 26px; height: 26px; }
+
+.eyebrow {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-deep);
+}
+
+h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.desc {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+  max-width: 34ch;
+}
+
+.links {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  transition: transform 0.12s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--teal); color: white; }
+.btn-secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-secondary:hover { border-color: var(--ink); }
+.btn svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="mark">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 4L4 11.5L11 13L13 20L20 4Z" fill="#0EA5A0"/></svg>
+  </div>
+  <span class="eyebrow">Prototype</span>
+  <h1>TripUp</h1>
+  <p class="desc">A group-trip app, click-through: poll a dinner spot, split the bill by item, settle up.</p>
+  <div class="links">
+    <a class="btn btn-primary" href="/app/">Open the app ↗</a>
+    <a class="btn btn-secondary" href="https://github.com/leonardobressan-99/TripUp" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      GitHub
+    </a>
+  </div>
+</div>
+</body>
+</html>

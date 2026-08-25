@@ -2,7 +2,7 @@
 
 A high-fidelity, click-through prototype of **TripUp** — a group-trip organizing app — built as a React + TypeScript SPA rendered inside a working iPhone mockup.
 
-**[Try it live →](https://claude.ai/code/artifact/52e0318f-fafb-47ee-8abf-5284e440b1ee)**
+Deployed on Netlify: the landing page lives at the site root, the interactive prototype at `/app`.
 
 ## The scenario
 
@@ -49,5 +49,10 @@ Then open the printed localhost URL — the app is a fixed 402×874pt viewport, 
 | --- | --- |
 | `npm run dev` | Start the Vite dev server |
 | `npm run build` | Type-check and build for production |
+| `npm run build:site` | Build the deployable site: the app into `dist/app` (base path `/app/`) plus the static [`landing/`](landing) page copied to `dist/` root — this is what Netlify runs |
 | `npm run lint` | Run oxlint |
-| `python3 scripts/build-artifact.py` | Build a single self-contained HTML file (after `npx vite build --config vite.artifact.config.ts`) — see the script's docstring for why this exists |
+| `python3 scripts/build-artifact.py` | Build a single self-contained HTML file (after `npx vite build --config vite.artifact.config.ts`) for publishing as a Claude Artifact — see the script's docstring for why it's structured this way |
+
+## Deployment
+
+Configured for Netlify via [`netlify.toml`](netlify.toml) (build command `npm run build:site`, publish directory `dist`). Connect the repo in Netlify's dashboard (Add new site → Import an existing project) and it builds both the landing page and the app on every push to `main`.
