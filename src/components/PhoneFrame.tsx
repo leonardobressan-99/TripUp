@@ -81,7 +81,6 @@ export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: Pho
             src={iphoneFrame}
             alt=""
             className="absolute inset-0 w-full h-full pointer-events-none select-none"
-            style={{ filter: "drop-shadow(0 40px 80px rgba(0,0,0,0.7))" }}
             draggable={false}
           />
         </div>
