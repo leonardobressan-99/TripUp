@@ -1,0 +1,93 @@
+import { useEffect, useState, type ReactNode } from "react";
+import iphoneFrame from "../assets/images/iphone-17-pro-frame.png";
+
+const DEVICE_W = 402;
+const DEVICE_H = 874;
+// iphone-17-pro-frame.png is 2920x5328 with a transparent rounded-rect
+// screen cutout at (286,95)-(2586,5178), measured directly from the true
+// glass-vs-bezel pixel transitions in the source photo (not just eyeballed)
+// to avoid leaving a sliver of "off" glass visible above/below the app
+// content. Scale so the cutout height matches DEVICE_H exactly (content is
+// then very slightly wider than the cutout, which is safe — the opaque
+// frame sits above and masks the overflow rather than leaving a gap).
+const SOURCE_W = 2920;
+const SOURCE_H = 5328;
+const CUTOUT = { x0: 286, y0: 135, x1: 2586, y1: 5178 };
+const FRAME_SCALE = DEVICE_H / (CUTOUT.y1 - CUTOUT.y0);
+const FRAME_W = SOURCE_W * FRAME_SCALE;
+const FRAME_H = SOURCE_H * FRAME_SCALE;
+const SCREEN_LEFT = CUTOUT.x0 * FRAME_SCALE - (DEVICE_W - (CUTOUT.x1 - CUTOUT.x0) * FRAME_SCALE) / 2;
+const SCREEN_TOP = CUTOUT.y0 * FRAME_SCALE - 1;
+const SAFE_MARGIN = 32;
+
+type PhoneFrameProps = {
+  children: ReactNode;
+  homeIndicatorTone?: "dark" | "light";
+};
+
+function useFitScale() {
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    function computeScale() {
+      const availableH = window.innerHeight - SAFE_MARGIN * 2;
+      const availableW = window.innerWidth - SAFE_MARGIN * 2;
+      const next = Math.min(1, availableH / FRAME_H, availableW / FRAME_W);
+      setScale(next);
+    }
+    computeScale();
+    window.addEventListener("resize", computeScale);
+    return () => window.removeEventListener("resize", computeScale);
+  }, []);
+
+  return scale;
+}
+
+export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: PhoneFrameProps) {
+  const scale = useFitScale();
+
+  return (
+    <div className="w-screen h-screen overflow-hidden flex items-center justify-center bg-[#0b0f1a]">
+      <div
+        style={{
+          width: FRAME_W,
+          height: FRAME_H,
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+        }}
+      >
+        <div className="relative" style={{ width: FRAME_W, height: FRAME_H }}>
+          {/* screen */}
+          <div
+            className="absolute overflow-hidden rounded-[54px] bg-cream"
+            style={{
+              top: SCREEN_TOP,
+              left: SCREEN_LEFT,
+              width: DEVICE_W,
+              height: DEVICE_H,
+            }}
+          >
+            {children}
+            {/* dynamic island */}
+            <div className="absolute top-[14px] left-1/2 -translate-x-1/2 w-[120px] h-[34px] rounded-full bg-black z-40 pointer-events-none" />
+            {/* home indicator */}
+            <div
+              className="absolute bottom-[9px] left-1/2 -translate-x-1/2 w-[134px] h-[5px] rounded-full z-40 pointer-events-none"
+              style={{ backgroundColor: homeIndicatorTone === "dark" ? "#1C2541" : "#FFFFFF", opacity: 0.9 }}
+            />
+          </div>
+          {/* iPhone 17 Pro mockup frame, drawn on top with a transparent screen cutout */}
+          <img
+            src={iphoneFrame}
+            alt=""
+            className="absolute inset-0 w-full h-full pointer-events-none select-none"
+            style={{ filter: "drop-shadow(0 40px 80px rgba(0,0,0,0.7))" }}
+            draggable={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { DEVICE_W, DEVICE_H };
