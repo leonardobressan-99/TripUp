@@ -260,7 +260,7 @@ export default function Home({
                       <motion.div
                         key={trip.id}
                         variants={cardVariants}
-                        className="absolute overflow-hidden rounded-[28px]"
+                        className="absolute overflow-hidden rounded-[32px]"
                         style={{
                           top,
                           left: inset,
