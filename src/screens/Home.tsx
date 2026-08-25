@@ -111,7 +111,7 @@ export default function Home({
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") onOpenTrip(currentTrip.id);
           }}
-          className="relative w-full text-left block cursor-pointer"
+          className="relative w-full text-left block cursor-pointer outline-none"
           style={{ height: 500 }}
         >
           <motion.div
@@ -167,7 +167,7 @@ export default function Home({
 
             <div className="px-4 pb-4">
               <div
-                className="w-full bg-white text-teal font-body font-bold text-[16px] flex items-center justify-center"
+                className="w-full bg-white text-ink font-body font-bold text-[16px] flex items-center justify-center"
                 style={{ borderRadius: 10, height: 48 }}
               >
                 Dive into your trip
