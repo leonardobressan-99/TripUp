@@ -254,7 +254,14 @@ export default function Home({
                   {sorted.map((trip, frontDepth) => {
                     const layerFromBack = n - 1 - frontDepth;
                     const top = layerFromBack * PEEK;
-                    const inset = frontDepth * INSET_STEP;
+                    // The card stack's bottom edge sits low enough to clip
+                    // against the device screen's own rounded corner (the
+                    // mockup's curve needs ~50px of clearance from the true
+                    // edge, well past the container's own 20px padding), so
+                    // every card gets a flat baseline inset on top of the
+                    // fan-out step, keeping its straight edge clear of that
+                    // curve instead of visibly cutting across it.
+                    const inset = 24 + frontDepth * INSET_STEP;
                     const zIndex = n - frontDepth;
                     return (
                       <motion.div
