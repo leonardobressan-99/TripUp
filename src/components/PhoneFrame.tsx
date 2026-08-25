@@ -66,7 +66,10 @@ export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: Pho
         }}
       >
         <div className="relative" style={{ width: FRAME_W, height: FRAME_H }}>
-          {/* screen */}
+          {/* bleed — a cream margin that closes the sub-pixel gap between the
+              content box below and the mockup's transparent cutout, without
+              changing the 874px reference frame every screen is laid out
+              against (see EDGE_BLEED above) */}
           <div
             className="absolute overflow-hidden rounded-[54px] bg-cream"
             style={{
@@ -76,14 +79,17 @@ export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: Pho
               height: RENDER_H,
             }}
           >
-            {children}
-            {/* dynamic island */}
-            <div className="absolute top-[14px] left-1/2 -translate-x-1/2 w-[120px] h-[34px] rounded-full bg-black z-40 pointer-events-none" />
-            {/* home indicator */}
-            <div
-              className="absolute bottom-[9px] left-1/2 -translate-x-1/2 w-[134px] h-[5px] rounded-full z-40 pointer-events-none"
-              style={{ backgroundColor: homeIndicatorTone === "dark" ? "#1C2541" : "#FFFFFF", opacity: 0.9 }}
-            />
+            {/* screen */}
+            <div className="absolute overflow-hidden" style={{ top: EDGE_BLEED, left: 0, width: DEVICE_W, height: DEVICE_H }}>
+              {children}
+              {/* dynamic island */}
+              <div className="absolute top-[14px] left-1/2 -translate-x-1/2 w-[120px] h-[34px] rounded-full bg-black z-40 pointer-events-none" />
+              {/* home indicator */}
+              <div
+                className="absolute bottom-[9px] left-1/2 -translate-x-1/2 w-[134px] h-[5px] rounded-full z-40 pointer-events-none"
+                style={{ backgroundColor: homeIndicatorTone === "dark" ? "#1C2541" : "#FFFFFF", opacity: 0.9 }}
+              />
+            </div>
           </div>
           {/* iPhone 17 Pro mockup frame, drawn on top with a transparent screen cutout */}
           <img
