@@ -464,7 +464,7 @@ export default function TripDetail({
                 initial="hidden"
                 animate="visible"
                 onClick={endTrip}
-                className="w-full h-[54px] rounded-[10px] flex items-center justify-center"
+                className="w-full h-[54px] shrink-0 rounded-[10px] flex items-center justify-center"
                 style={{
                   backgroundColor: "rgba(255,92,114,0.10)",
                   border: "1.5px solid rgba(255,92,114,0.55)",
