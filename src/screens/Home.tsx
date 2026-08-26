@@ -112,7 +112,7 @@ export default function Home({
             if (e.key === "Enter" || e.key === " ") onOpenTrip(currentTrip.id);
           }}
           className="relative w-full text-left block cursor-pointer outline-none"
-          style={{ height: 500 }}
+          style={{ height: 350 }}
         >
           <motion.div
             layoutId="hero-image"
@@ -254,20 +254,13 @@ export default function Home({
                   {sorted.map((trip, frontDepth) => {
                     const layerFromBack = n - 1 - frontDepth;
                     const top = layerFromBack * PEEK;
-                    // The card stack's bottom edge sits low enough to clip
-                    // against the device screen's own rounded corner (the
-                    // mockup's curve needs ~50px of clearance from the true
-                    // edge, well past the container's own 20px padding), so
-                    // every card gets a flat baseline inset on top of the
-                    // fan-out step, keeping its straight edge clear of that
-                    // curve instead of visibly cutting across it.
-                    const inset = 24 + frontDepth * INSET_STEP;
+                    const inset = frontDepth * INSET_STEP;
                     const zIndex = n - frontDepth;
                     return (
                       <motion.div
                         key={trip.id}
                         variants={cardVariants}
-                        className="absolute overflow-hidden rounded-[32px]"
+                        className="absolute overflow-hidden rounded-[28px]"
                         style={{
                           top,
                           left: inset,
