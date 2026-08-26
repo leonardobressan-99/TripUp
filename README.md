@@ -9,11 +9,12 @@ Deployed on Netlify: the landing page lives at the site root, the interactive pr
 A group of friends is on the last day of a trip to Lisbon. TripUp walks through the full loop of organizing the final evening together:
 
 1. **Poll** the group on where to have the last dinner, nudge stragglers to vote, and close the poll once it's decided.
-2. The itinerary updates automatically with the winning restaurant.
-3. **Log the expense** — scan a receipt (or add it manually), split it by item, and exclude specific people from specific line items (e.g. two people who didn't drink the wine).
-4. **Balances update live** across the whole trip, netted pairwise so anyone can simultaneously owe one person and be owed by another.
-5. **Settle up** — pay a balance through a method-picker flow, nudge someone who owes you, and watch balances flip to paid in real time.
-6. **End the trip** — everything reconciles to a settled recap screen.
+2. **Add member** Ren to the group for the last day
+3. The itinerary updates automatically with the winning restaurant.
+4. **Log the expense** — scan a receipt (or add it manually), split it by item, and exclude specific people from specific line items (e.g. two people who didn't drink the wine).
+5. **Balances update live** across the whole trip, netted pairwise so anyone can simultaneously owe one person and be owed by another.
+6. **Settle up** — pay a balance through a method-picker flow, nudge someone who owes you, and watch balances flip to paid in real time.
+7. **End the trip** — everything reconciles to a settled recap screen.
 
 ## Tech stack
 
