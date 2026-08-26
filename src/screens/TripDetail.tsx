@@ -457,6 +457,21 @@ export default function TripDetail({
                   </div>
                 </Card>
               </motion.button>
+
+              <motion.button
+                custom={3}
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                onClick={endTrip}
+                className="w-full h-[54px] rounded-[12px] flex items-center justify-center"
+                style={{
+                  backgroundColor: "rgba(255,92,114,0.10)",
+                  border: "1.5px solid rgba(255,92,114,0.55)",
+                }}
+              >
+                <span className="font-body font-bold text-coral text-[16px]">End trip</span>
+              </motion.button>
             </motion.div>
           )}
 
@@ -654,14 +669,6 @@ export default function TripDetail({
                       </div>
                     </Card>
 
-                    <button
-                      onClick={endTrip}
-                      className="w-full h-[54px] rounded-[10px] flex items-center justify-center gap-2"
-                      style={{ border: "1.5px solid #1C2541" }}
-                    >
-                      <span className="text-[16px]">🏁</span>
-                      <span className="font-body font-bold text-ink text-[16px]">End trip</span>
-                    </button>
                   </motion.div>
                 )}
 
