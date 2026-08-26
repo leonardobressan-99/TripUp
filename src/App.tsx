@@ -385,18 +385,25 @@ function App() {
       <AppInner key={resetKey} />
       {!embedded && (
         <button
+          type="button"
           onClick={() => setResetKey((k) => k + 1)}
-          className="fixed top-6 right-6 z-50 flex items-center gap-2 font-body font-bold text-ink text-[14px]"
-          style={{
-            backgroundColor: "#FAF6EE",
-            border: "1.5px solid rgba(28,37,65,0.14)",
-            borderRadius: 9999,
-            padding: "10px 18px",
-            boxShadow: "0 8px 20px rgba(28,37,65,0.14)",
-          }}
+          className="fixed top-6 right-6 z-50 flex items-center gap-2 rounded-full border-[1.5px] border-[rgba(28,37,65,0.14)] bg-white px-5 py-3 font-body font-bold text-ink text-[14px] shadow-[0_8px_20px_rgba(28,37,65,0.08)] transition-[box-shadow,border-color] hover:border-ink hover:shadow-[0_10px_24px_rgba(28,37,65,0.14)]"
         >
-          <span aria-hidden="true">↺</span>
-          Restart
+          <svg
+            viewBox="0 0 16 16"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.87" />
+            <path d="M13.5 2.5v3h-3" />
+          </svg>
+          Restart prototype
         </button>
       )}
     </>
