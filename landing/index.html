@@ -123,13 +123,43 @@ h1 {
 .btn-secondary:hover { border-color: var(--ink); }
 .btn svg { width: 16px; height: 16px; }
 
+.stage-row {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
 .stage {
   width: 100%;
   max-width: 460px;
   aspect-ratio: 506 / 923;
   border: none;
   display: block;
+  flex-shrink: 0;
 }
+
+.restart-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 9999px;
+  padding: 12px 20px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(28, 37, 65, 0.08);
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.restart-btn:hover { transform: translateY(-1px); border-color: var(--ink); }
+.restart-btn svg { width: 16px; height: 16px; }
 </style>
 </head>
 <body>
@@ -150,7 +180,23 @@ h1 {
   </div>
 </div>
 
-<iframe class="stage" src="/app/" title="TripUp interactive prototype" loading="lazy"></iframe>
+<div class="stage-row">
+  <iframe class="stage" id="stage" src="/app/" title="TripUp interactive prototype" loading="lazy"></iframe>
+  <button class="restart-btn" id="restart-btn" type="button">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.87" />
+      <path d="M13.5 2.5v3h-3" />
+    </svg>
+    Restart prototype
+  </button>
+</div>
+
+<script>
+  document.getElementById("restart-btn").addEventListener("click", function () {
+    var stage = document.getElementById("stage");
+    stage.contentWindow.postMessage("tripup:restart", window.location.origin);
+  });
+</script>
 
 </body>
 </html>

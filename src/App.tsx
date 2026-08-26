@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import PhoneFrame from "./components/PhoneFrame";
 import Springboard from "./screens/Springboard";
@@ -48,7 +48,9 @@ type Tab = "summary" | "itinerary" | "budget";
 
 let savedExpenseCounter = 0;
 
-function App() {
+const RESTART_MESSAGE = "tripup:restart";
+
+function AppInner() {
   const [screen, setScreen] = useState<Screen>("springboard");
   const [expenseItems, setExpenseItems] = useState<WorkingItem[]>([]);
   const [paidById, setPaidById] = useState("ari");
@@ -354,6 +356,50 @@ function App() {
         )}
       </AnimatePresence>
     </PhoneFrame>
+  );
+}
+
+function App() {
+  const [resetKey, setResetKey] = useState(0);
+  const [embedded, setEmbedded] = useState(true);
+
+  useEffect(() => {
+    setEmbedded(window.self !== window.top);
+  }, []);
+
+  // The same build serves both the standalone /app/ page and the iframe
+  // embedded on the landing page. Listening for a postMessage lets the
+  // landing page's own restart button (rendered outside the iframe, with
+  // real layout margin) reset this app's state without a page reload,
+  // regardless of which context it's running in.
+  useEffect(() => {
+    function handleMessage(e: MessageEvent) {
+      if (e.data === RESTART_MESSAGE) setResetKey((k) => k + 1);
+    }
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  return (
+    <>
+      <AppInner key={resetKey} />
+      {!embedded && (
+        <button
+          onClick={() => setResetKey((k) => k + 1)}
+          className="fixed top-6 right-6 z-50 flex items-center gap-2 font-body font-bold text-ink text-[14px]"
+          style={{
+            backgroundColor: "#FAF6EE",
+            border: "1.5px solid rgba(28,37,65,0.14)",
+            borderRadius: 9999,
+            padding: "10px 18px",
+            boxShadow: "0 8px 20px rgba(28,37,65,0.14)",
+          }}
+        >
+          <span aria-hidden="true">↺</span>
+          Restart
+        </button>
+      )}
+    </>
   );
 }
 
