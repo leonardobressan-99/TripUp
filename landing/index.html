@@ -123,23 +123,20 @@ h1 {
 .btn-secondary:hover { border-color: var(--ink); }
 .btn svg { width: 16px; height: 16px; }
 
-.stage-row {
+/* The stage stays centered on the page by itself - the button is
+   positioned off its right edge, absolutely, so it never pulls the
+   phone off-center to make room for itself. */
+.stage-wrap {
+  position: relative;
   width: 100%;
-  max-width: 760px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 28px;
-  flex-wrap: wrap;
+  max-width: 460px;
 }
 
 .stage {
   width: 100%;
-  max-width: 460px;
   aspect-ratio: 506 / 923;
   border: none;
   display: block;
-  flex-shrink: 0;
 }
 
 .restart-btn {
@@ -155,11 +152,31 @@ h1 {
   border-radius: 9999px;
   padding: 12px 20px;
   cursor: pointer;
+  white-space: nowrap;
   box-shadow: 0 8px 20px rgba(28, 37, 65, 0.08);
-  transition: transform 0.12s ease, border-color 0.12s ease;
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
+
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-left: 28px;
+  transform: translateY(-50%);
 }
-.restart-btn:hover { transform: translateY(-1px); border-color: var(--ink); }
+.restart-btn:hover { border-color: var(--ink); box-shadow: 0 10px 24px rgba(28, 37, 65, 0.14); }
 .restart-btn svg { width: 16px; height: 16px; }
+
+/* Not enough room to the side once the viewport can't fit the phone
+   plus the button without either clipping or crowding it - stack the
+   button below instead, still centered under the (still-centered)
+   phone. */
+@media (max-width: 900px) {
+  .restart-btn {
+    position: static;
+    transform: none;
+    margin: 24px auto 0;
+  }
+  .stage-wrap { display: flex; flex-direction: column; align-items: center; }
+}
 </style>
 </head>
 <body>
@@ -180,7 +197,7 @@ h1 {
   </div>
 </div>
 
-<div class="stage-row">
+<div class="stage-wrap">
   <iframe class="stage" id="stage" src="/app/" title="TripUp interactive prototype" loading="lazy"></iframe>
   <button class="restart-btn" id="restart-btn" type="button">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
