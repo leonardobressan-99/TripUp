@@ -826,10 +826,13 @@ export default function TripDetail({
                       </button>
                       <button
                         onClick={backToBalances}
-                        className="w-full h-[54px] rounded-[10px] flex items-center justify-center"
-                        style={{ border: "1.5px solid rgba(28,37,65,0.14)" }}
+                        className="w-full h-[54px] rounded-[10px] bg-white flex items-center justify-center"
+                        style={{
+                          border: "1px solid rgba(28,37,65,0.10)",
+                          boxShadow: "0 2px 6px rgba(28,37,65,0.06)",
+                        }}
                       >
-                        <span className="font-body font-bold text-ink text-[16px]">Back to Budget</span>
+                        <span className="font-body font-bold text-teal text-[16px]">Back to Budget</span>
                       </button>
                     </div>
                   </motion.div>
