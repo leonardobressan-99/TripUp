@@ -271,8 +271,6 @@ export default function Home({
                             frontDepth === 0
                               ? "0 24px 40px rgba(28,37,65,0.28), 0 4px 10px rgba(28,37,65,0.14)"
                               : "0 8px 16px rgba(28,37,65,0.12)",
-                          WebkitMaskImage: "-webkit-radial-gradient(white, white)",
-                          maskImage: "radial-gradient(white, white)",
                         }}
                       >
                         {trip.cover ? (

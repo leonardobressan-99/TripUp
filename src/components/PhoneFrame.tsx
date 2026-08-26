@@ -28,6 +28,10 @@ const EDGE_BLEED = 3;
 const SCREEN_TOP = CUTOUT.y0 * FRAME_SCALE - 1 - EDGE_BLEED;
 const RENDER_H = DEVICE_H + EDGE_BLEED * 2;
 const SAFE_MARGIN = 32;
+// Corner radius of the app's content box. Deliberately a little smaller than
+// the mockup cutout's own measured ~52px radius so the content always fully
+// covers the cutout's corners instead of risking a gap at the seam.
+const SCREEN_RADIUS = 46;
 
 type PhoneFrameProps = {
   children: ReactNode;
@@ -66,20 +70,23 @@ export default function PhoneFrame({ children, homeIndicatorTone = "dark" }: Pho
         }}
       >
         <div className="relative" style={{ width: FRAME_W, height: FRAME_H }}>
-          {/* screen — rounded at 46px, deliberately less than the mockup
-              cutout's own measured ~52px corner radius. The visible shape is
-              always whichever radius is SMALLER (the other one just clips
-              nothing extra), so keeping this one smaller guarantees the
-              content box fully covers the cutout's rounded corners with a
-              safety margin, rather than risking a gap if the two radii
-              don't match exactly. */}
+          {/* screen */}
           <div
-            className="absolute overflow-hidden rounded-[46px] bg-cream"
+            className="absolute overflow-hidden bg-cream"
             style={{
               top: SCREEN_TOP,
               left: SCREEN_LEFT,
               width: DEVICE_W,
               height: RENDER_H,
+              borderRadius: SCREEN_RADIUS,
+              // WebKit drops the corner radius when clipping descendants of an
+              // `overflow:hidden` box that sits under a CSS transform (the
+              // scale() applied above), so on Safari the trip cards render
+              // with square corners poking past the screen's curve while
+              // Chromium clips them correctly. clip-path isn't subject to that
+              // fallback, so declaring the same rounded rect here forces every
+              // descendant to follow the screen's curve on both engines.
+              clipPath: `inset(0 round ${SCREEN_RADIUS}px)`,
             }}
           >
             {children}
