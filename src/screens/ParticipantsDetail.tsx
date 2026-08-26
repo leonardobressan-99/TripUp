@@ -9,10 +9,13 @@ import deleteBadge from "../assets/icons/Delete-badge.svg";
 
 const DEFAULT_KEYBOARD_HEIGHT = 258;
 
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, h) => `${String(h).padStart(2, "0")}:00`);
+
 type ParticipantsDetailProps = {
   memberIds: string[];
   allMembers: Record<string, Member>;
   memberJoinDates: Record<string, string>;
+  memberJoinTimes: Record<string, string>;
   dayOptions: string[];
   tripStartDate: string;
   autoOpenInvite?: boolean;
@@ -20,6 +23,7 @@ type ParticipantsDetailProps = {
   onAddMember: (member: Member) => void;
   onRemoveMember: (id: string) => void;
   onUpdateJoinDate: (id: string, date: string) => void;
+  onUpdateJoinTime: (id: string, time: string) => void;
 };
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -36,6 +40,7 @@ export default function ParticipantsDetail({
   memberIds,
   allMembers,
   memberJoinDates,
+  memberJoinTimes,
   dayOptions,
   tripStartDate,
   autoOpenInvite,
@@ -43,6 +48,7 @@ export default function ParticipantsDetail({
   onAddMember,
   onRemoveMember,
   onUpdateJoinDate,
+  onUpdateJoinTime,
 }: ParticipantsDetailProps) {
   const [showInvite, setShowInvite] = useState(!!autoOpenInvite);
   const [query, setQuery] = useState("");
@@ -109,23 +115,19 @@ export default function ParticipantsDetail({
         <div className="flex flex-col gap-3">
           {currentMembers.map((m) => {
             const joinDate = memberJoinDates[m.id] ?? tripStartDate;
+            const joinTime = memberJoinTimes[m.id] ?? "00:00";
             return (
               <Card key={m.id} className="flex items-center gap-3">
                 <Avatar member={m} size={44} />
                 <div className="flex-1 min-w-0">
                   <p className="font-body font-bold text-ink text-[15px] flex items-center gap-1.5 flex-wrap">
                     {m.name}
-                    {m.isOrganizer && (
+                    {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
+                    {m.isOrganizer ? (
                       <span className="font-body font-bold text-[10px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
                         Organizer
                       </span>
-                    )}
-                    {m.isYou && (
-                      <span className="font-body font-bold text-[10px] text-grey-ink uppercase tracking-wide bg-[#EDE7DA] px-2 py-0.5 rounded-full">
-                        You
-                      </span>
-                    )}
-                    {!m.isOrganizer && !m.isYou && (
+                    ) : (
                       <span className="font-body font-bold text-[10px] text-grey-ink uppercase tracking-wide bg-[#EDE7DA] px-2 py-0.5 rounded-full">
                         Member
                       </span>
@@ -145,9 +147,20 @@ export default function ParticipantsDetail({
                         </option>
                       ))}
                     </select>
+                    <select
+                      value={joinTime}
+                      onChange={(e) => onUpdateJoinTime(m.id, e.target.value)}
+                      className="font-body font-bold text-teal text-[11px] bg-transparent outline-none"
+                    >
+                      {HOUR_OPTIONS.map((h) => (
+                        <option key={h} value={h}>
+                          {h}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                 </div>
-                {!m.isYou && (
+                {!m.isYou && !m.isOrganizer && (
                   <button
                     onClick={() => onRemoveMember(m.id)}
                     aria-label={`Remove ${m.name}`}
@@ -213,6 +226,7 @@ export default function ParticipantsDetail({
                   {matches.map((m) => (
                     <button
                       key={m.id}
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={() => handleAddSuggested(m)}
                       className="w-full flex items-center gap-3 bg-white rounded-[10px] px-3 py-2.5 text-left"
                       style={{ boxShadow: "0 4px 10px rgba(28,37,65,0.06)" }}
@@ -230,6 +244,7 @@ export default function ParticipantsDetail({
 
               {q.length > 0 && matches.length === 0 && (
                 <button
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={handleInviteByEmail}
                   className="mt-4 w-full h-[54px] rounded-[10px] bg-teal flex items-center justify-center"
                 >
@@ -246,7 +261,15 @@ export default function ParticipantsDetail({
           <IOSKeyboard
             onChar={typeChar}
             onBackspace={backspace}
-            onReturn={() => inputRef.current?.blur()}
+            onReturn={() => {
+              if (matches.length > 0) {
+                handleAddSuggested(matches[0]);
+              } else if (q.length > 0) {
+                handleInviteByEmail();
+              } else {
+                inputRef.current?.blur();
+              }
+            }}
             returnLabel="Done"
           />
         )}

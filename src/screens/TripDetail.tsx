@@ -10,6 +10,9 @@ import Avatar from "../components/Avatar";
 import AvatarStack from "../components/AvatarStack";
 import { PollIcon, ExpenseIcon, MemberIcon } from "../components/ActionIcons";
 import checkBadge from "../assets/icons/check-badge.svg";
+import creditCardIcon from "../assets/images/CreditCard.png";
+import applePayIcon from "../assets/images/ApplePay.png";
+import cashIcon from "../assets/images/Cash.png";
 import {
   trips,
   formatDateRange,
@@ -58,9 +61,9 @@ const cardVariants = {
 };
 
 const PAYMENT_METHODS = [
-  { id: "bank", icon: "🏦", label: "Instant bank transfer", subtitle: "Arrives in seconds" },
-  { id: "applepay", icon: "🍎", label: "Apple Pay", subtitle: "Fast & secure" },
-  { id: "cash", icon: "💵", label: "Mark as paid in cash", subtitle: "No receipt" },
+  { id: "bank", icon: creditCardIcon, label: "Instant bank transfer", subtitle: "Arrives in seconds" },
+  { id: "applepay", icon: applePayIcon, label: "Apple Pay", subtitle: "Fast & secure" },
+  { id: "cash", icon: cashIcon, label: "Mark as paid in cash", subtitle: "No receipt" },
 ];
 
 function Card({
@@ -180,6 +183,7 @@ export default function TripDetail({
   const [budgetStep, setBudgetStep] = useState<BudgetStep>("list");
   const [activeTxn, setActiveTxn] = useState<BalanceTxn | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
   const tabIndex = TABS.indexOf(tab);
   const prevIndexRef = useRef(tabIndex);
   const direction = tabIndex > prevIndexRef.current ? 1 : -1;
@@ -280,7 +284,11 @@ export default function TripDetail({
               className="absolute top-1 bottom-1 rounded-full bg-teal"
               initial={false}
               animate={{ left: `calc(${(tabIndex / 3) * 100}% + 4px)` }}
-              style={{ width: "calc(33.333% - 8px)" }}
+              style={{
+                width: "calc(33.333% - 8px)",
+                boxShadow:
+                  "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7)",
+              }}
               transition={tabReady ? { duration: 0.35, ease: "easeInOut" } : { duration: 0 }}
             />
             {TABS.map((t) => (
@@ -323,19 +331,6 @@ export default function TripDetail({
                     style={{
                       background: "linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0) 70%)",
                     }}
-                  />
-                  {/* carries over Home's vivid gradient tint and eases it out, so the
-                      handoff dissolves smoothly instead of popping straight to the
-                      subtler dark gradient above. */}
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, rgba(214,20,20,0.88) 0%, rgba(224,40,40,0.72) 22%, rgba(200,40,40,0.42) 42%, rgba(20,10,15,0.1) 58%, rgba(10,5,10,0.6) 100%)",
-                    }}
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: 0 }}
-                    transition={{ duration: 0.6, ease: "easeIn" }}
                   />
                 </motion.div>
                 <div className="absolute left-5 bottom-5 right-5 z-10">
@@ -463,7 +458,7 @@ export default function TripDetail({
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
-                onClick={endTrip}
+                onClick={() => setShowEndConfirm(true)}
                 className="w-full h-[54px] shrink-0 rounded-[10px] flex items-center justify-center"
                 style={{
                   backgroundColor: "rgba(255,92,114,0.10)",
@@ -496,7 +491,11 @@ export default function TripDetail({
                           {item.day}
                         </p>
                       )}
-                      <div className="flex gap-3 py-2.5 border-t border-[#EDE7DA] first:border-t-0">
+                      <div
+                        className={`flex gap-3 pt-2.5 border-t border-[#EDE7DA] first:border-t-0 ${
+                          item.pending && pollWinner ? "pb-4" : "pb-2.5"
+                        }`}
+                      >
                         <p className="font-body text-grey-ink text-[13px] w-[64px] shrink-0 pt-0.5">{item.time}</p>
                         <div>
                           <p
@@ -509,7 +508,7 @@ export default function TripDetail({
                           {item.pending && pollWinner ? (
                             <>
                               <p className="font-body text-teal text-[13px] mt-0.5">🎉 Decided by poll</p>
-                              <div className="flex items-center gap-2 mt-2.5">
+                              <div className="flex items-center gap-2 mt-5">
                                 <button
                                   onClick={() =>
                                     window.open(
@@ -523,13 +522,13 @@ export default function TripDetail({
                                   className="h-9 px-4 rounded-[10px] bg-white flex items-center justify-center"
                                   style={{ border: "1.5px solid #0EA5A0" }}
                                 >
-                                  <span className="font-body font-bold text-teal text-[13px]">Directions</span>
+                                  <span className="font-body font-bold text-teal text-[15px]">Directions</span>
                                 </button>
                                 <button
                                   onClick={onAddExpense}
                                   className="h-9 px-4 rounded-[10px] bg-teal flex items-center justify-center"
                                 >
-                                  <span className="font-body font-bold text-white text-[13px]">Add expense</span>
+                                  <span className="font-body font-bold text-white text-[15px]">Add expense</span>
                                 </button>
                               </div>
                             </>
@@ -717,8 +716,8 @@ export default function TripDetail({
                                 className="flex items-center gap-3 !p-3.5"
                                 style={{ border: selected ? "1.5px solid #0EA5A0" : "1.5px solid transparent" }}
                               >
-                                <div className="w-9 h-9 rounded-full bg-cream flex items-center justify-center text-[16px] shrink-0">
-                                  {m.icon}
+                                <div className="w-9 h-9 flex items-center justify-center shrink-0">
+                                  <img src={m.icon} alt="" className="w-9 h-9 object-contain" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="font-body font-bold text-ink text-[14px]">{m.label}</p>
@@ -768,30 +767,17 @@ export default function TripDetail({
                       ✅
                     </motion.div>
 
-                    {allSettled ? (
-                      <>
-                        <h1 className="font-heading font-normal text-ink text-[32px] leading-tight mt-4">
-                          🎉 Lisbon is settled
-                        </h1>
-                        <p className="font-body text-grey-ink text-[14px] mt-1.5 px-4">
-                          Everyone paid their share. Trip balance is €0.00 — the whole group is even.
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <h1 className="font-heading font-normal text-ink text-[32px] leading-tight mt-4">Paid</h1>
-                        <p className="font-body text-ink text-[15px] mt-1.5">
-                          <span className="font-bold">
-                            <MemberName member={allMembers[activeTxn.fromId]} />
-                          </span>{" "}
-                          →{" "}
-                          <span className="font-bold">
-                            <MemberName member={allMembers[activeTxn.toId]} />
-                          </span>
-                          , €{activeTxn.amount.toFixed(2)}
-                        </p>
-                      </>
-                    )}
+                    <h1 className="font-heading font-normal text-ink text-[32px] leading-tight mt-4">Paid</h1>
+                    <p className="font-body text-ink text-[15px] mt-1.5">
+                      <span className="font-bold">
+                        <MemberName member={allMembers[activeTxn.fromId]} />
+                      </span>{" "}
+                      →{" "}
+                      <span className="font-bold">
+                        <MemberName member={allMembers[activeTxn.toId]} />
+                      </span>
+                      , €{activeTxn.amount.toFixed(2)}
+                    </p>
 
                     <div className="w-full bg-white rounded-[20px] p-4 mt-6 text-left" style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}>
                       <p className="font-body font-bold text-grey-ink text-[11px] uppercase tracking-wide mb-3">
@@ -818,12 +804,34 @@ export default function TripDetail({
                       </div>
                     </div>
 
-                    <button
-                      onClick={backToBalances}
-                      className="w-full h-[54px] rounded-[10px] bg-teal flex items-center justify-center mt-6"
+                    <div
+                      className="w-full rounded-[20px] p-5 mt-4 text-center"
+                      style={{ backgroundColor: "rgba(14,165,160,0.08)", border: "1.5px solid rgba(14,165,160,0.3)" }}
                     >
-                      <span className="font-body font-bold text-white text-[16px]">Back to Budget</span>
-                    </button>
+                      <p className="font-body font-bold text-ink text-[15px] leading-snug">
+                        It's your last night in Lisbon and everyone's settled up — want to end the trip?
+                      </p>
+                    </div>
+
+                    <div className="w-full flex flex-col gap-3 mt-6">
+                      <button
+                        onClick={endTrip}
+                        className="w-full h-[54px] rounded-[10px] flex items-center justify-center"
+                        style={{
+                          backgroundColor: "rgba(255,92,114,0.10)",
+                          border: "1.5px solid rgba(255,92,114,0.55)",
+                        }}
+                      >
+                        <span className="font-body font-bold text-coral text-[16px]">End trip</span>
+                      </button>
+                      <button
+                        onClick={backToBalances}
+                        className="w-full h-[54px] rounded-[10px] flex items-center justify-center"
+                        style={{ border: "1.5px solid rgba(28,37,65,0.14)" }}
+                      >
+                        <span className="font-body font-bold text-ink text-[16px]">Back to Budget</span>
+                      </button>
+                    </div>
                   </motion.div>
                 )}
 
@@ -936,9 +944,11 @@ export default function TripDetail({
       </AnimatePresence>
 
       {/* floating quick-action button */}
-      <div className="absolute bottom-[30px] right-5 z-30">
-        <MagicAddButton onClick={() => setFabOpen((v) => !v)} open={fabOpen} />
-      </div>
+      {budgetStep !== "settle" && budgetStep !== "confirmed" && (
+        <div className="absolute bottom-[30px] right-5 z-30">
+          <MagicAddButton onClick={() => setFabOpen((v) => !v)} open={fabOpen} />
+        </div>
+      )}
 
       {/* quick-action sheet */}
       <ActionSheet
@@ -950,6 +960,56 @@ export default function TripDetail({
           { key: "expense", icon: <ExpenseIcon />, label: "Add expense", onSelect: onAddExpense },
         ]}
       />
+
+      {/* end trip confirmation */}
+      <AnimatePresence>
+        {showEndConfirm && (
+          <>
+            <motion.div
+              className="absolute inset-0 z-40"
+              style={{ background: "rgba(28,37,65,0.4)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setShowEndConfirm(false)}
+            />
+            <motion.div
+              className="absolute left-8 right-8 z-50 overflow-hidden"
+              style={{ top: "50%", backgroundColor: "#FAF6EE", borderRadius: 20 }}
+              initial={{ opacity: 0, scale: 0.92, y: "-46%" }}
+              animate={{ opacity: 1, scale: 1, y: "-50%" }}
+              exit={{ opacity: 0, scale: 0.92, y: "-46%" }}
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            >
+              <div className="px-6 pt-7 pb-5 text-center">
+                <h2 className="font-body font-bold text-ink text-[17px] mb-2">Are you sure you want to end this trip?</h2>
+                <p className="font-body text-grey-ink text-[14px] leading-relaxed">
+                  All open balances will be marked as settled. This can't be undone.
+                </p>
+              </div>
+              <div className="flex border-t" style={{ borderColor: "rgba(28,37,65,0.1)" }}>
+                <button
+                  onClick={() => setShowEndConfirm(false)}
+                  className="flex-1 h-[52px] font-body font-bold text-ink text-[15px]"
+                >
+                  Cancel
+                </button>
+                <div className="w-px" style={{ backgroundColor: "rgba(28,37,65,0.1)" }} />
+                <button
+                  onClick={() => {
+                    setShowEndConfirm(false);
+                    endTrip();
+                  }}
+                  className="flex-1 h-[52px] font-body font-bold text-coral text-[15px]"
+                >
+                  End trip
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

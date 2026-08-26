@@ -189,9 +189,9 @@ export default function Home({
                 backgroundColor: ["#0EA5A0", "rgba(255,255,255,0.35)", "#0EA5A0"],
                 backdropFilter: ["blur(0px)", "blur(8px)", "blur(0px)"],
                 boxShadow: [
-                  "0 0px 0px rgba(0,0,0,0)",
-                  "0 6px 16px rgba(0,0,0,0.18)",
-                  "0 0px 0px rgba(0,0,0,0)",
+                  "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7)",
+                  "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7), 0 6px 16px rgba(0,0,0,0.18)",
+                  "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7)",
                 ],
               }}
               transition={

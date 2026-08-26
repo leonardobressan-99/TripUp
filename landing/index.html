@@ -7,13 +7,6 @@
 <link rel="icon" type="image/png" href="icon.png">
 <style>
 @font-face {
-  font-family: "Fraunces";
-  src: url("fonts/Fraunces_144pt_Soft-SemiBold.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
   font-family: "Nexa Text";
   src: url("fonts/NexaTextRegular.otf") format("opentype");
   font-weight: 400;
@@ -34,76 +27,157 @@
   --ink-soft: #64698a;
   --teal: #0ea5a0;
   --teal-deep: #0a7a76;
+  --coral: #ff5c72;
   --line: rgba(28, 37, 65, 0.14);
   --surface: #ffffff;
 }
 
 * { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--grey-bg);
   color: var(--ink);
   font-family: "Nexa Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 56px 24px 72px;
-  gap: 48px;
 }
 
-.card {
-  max-width: 420px;
-  width: 100%;
+.top-header {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 22px 24px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+.top-header b { color: var(--ink); font-weight: 700; }
+
+.page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 72px;
+  padding: 24px 48px 40px;
+}
+
+/* Left: the prototype */
+.stage-col {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 14px;
+  gap: 22px;
+  flex-shrink: 0;
 }
 
-.mark {
-  width: 56px;
-  height: 56px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(28, 37, 65, 0.14);
-  margin-bottom: 6px;
+.stage-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 90%;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(closest-side, rgba(14, 165, 160, 0.28), transparent 72%),
+    radial-gradient(closest-side, rgba(255, 92, 114, 0.16), transparent 70%);
+  background-position: 30% 35%, 75% 70%;
+  background-repeat: no-repeat;
+  background-size: 75% 75%, 65% 65%;
+  filter: blur(10px);
+  pointer-events: none;
 }
-.mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.eyebrow {
+.stage {
+  position: relative;
+  /* PhoneFrame renders the phone at its own fixed native pixel size
+     inside the iframe (scaled down only as far as needed to fit,
+     never up), with a 32px safe margin on every side. That margin is
+     a flat pixel amount, so a small iframe box loses a much bigger
+     share of itself to it than a large one does - undersizing this
+     box leaves the rendered phone noticeably smaller than the box,
+     with dead space around it. Sizing close to the frame's own
+     natural footprint (~570x987 including its margin) keeps the
+     phone close to its native scale instead. */
+  /* 40px page padding top+bottom, the 22px gap to the restart button,
+     and the button's own ~44px height all sit below/around this in
+     the same column - subtracting them here (not just eyeballing a
+     vh percentage) is what actually guarantees the whole column fits
+     the viewport with no scroll, regardless of window height. */
+  height: min(calc(100vh - 154px), 940px);
+  aspect-ratio: 506 / 923;
+  width: auto;
+  border: none;
+  display: block;
+}
+
+.restart-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(28, 37, 65, 0.08);
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.restart-btn:hover { border-color: var(--ink); box-shadow: 0 10px 24px rgba(28, 37, 65, 0.14); }
+.restart-btn svg { width: 16px; height: 16px; }
+
+/* Right: title, scenario, task credit, actions */
+.text-col {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.section-label {
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--teal-deep);
+  margin: 4px 0 -8px;
 }
 
-h1 {
-  font-family: "Fraunces", Georgia, serif;
-  font-weight: 600;
-  font-size: 40px;
-  line-height: 1;
-  margin: 0;
-  letter-spacing: -0.01em;
+.logo {
+  width: 228px;
+  height: auto;
+  display: block;
 }
 
 .desc {
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: 15.5px;
+  line-height: 1.6;
   color: var(--ink-soft);
   margin: 0;
-  max-width: 34ch;
+  max-width: 40ch;
 }
 
 .links {
   display: flex;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 4px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 .btn {
   display: inline-flex;
@@ -111,7 +185,7 @@ h1 {
   gap: 7px;
   font-weight: 700;
   font-size: 14px;
-  padding: 11px 20px;
+  padding: 12px 20px;
   border-radius: 10px;
   text-decoration: none;
   border: 1.5px solid transparent;
@@ -123,89 +197,57 @@ h1 {
 .btn-secondary:hover { border-color: var(--ink); }
 .btn svg { width: 16px; height: 16px; }
 
-/* The stage stays centered on the page by itself - the button is
-   positioned off its right edge, absolutely, so it never pulls the
-   phone off-center to make room for itself. */
-.stage-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-}
-
-.stage {
-  width: 100%;
-  aspect-ratio: 506 / 923;
-  border: none;
-  display: block;
-}
-
-.restart-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 14px;
-  font-family: inherit;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1.5px solid var(--line);
-  border-radius: 9999px;
-  padding: 12px 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 8px 20px rgba(28, 37, 65, 0.08);
-  transition: box-shadow 0.12s ease, border-color 0.12s ease;
-
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  margin-left: 28px;
-  transform: translateY(-50%);
-}
-.restart-btn:hover { border-color: var(--ink); box-shadow: 0 10px 24px rgba(28, 37, 65, 0.14); }
-.restart-btn svg { width: 16px; height: 16px; }
-
-/* Not enough room to the side once the viewport can't fit the phone
-   plus the button without either clipping or crowding it - stack the
-   button below instead, still centered under the (still-centered)
-   phone. */
-@media (max-width: 900px) {
-  .restart-btn {
-    position: static;
-    transform: none;
-    margin: 24px auto 0;
+/* Below this width there's no room for the phone and the text side by
+   side without crowding or shrinking the phone past readability -
+   stack instead and let the page scroll, same as any normal page. */
+@media (max-width: 980px), (max-height: 700px) {
+  html, body { height: auto; }
+  .page {
+    flex-direction: column;
+    padding: 48px 24px 64px;
+    gap: 48px;
   }
-  .stage-wrap { display: flex; flex-direction: column; align-items: center; }
+  .stage { height: auto; width: min(100%, 420px); }
+  .text-col { align-items: center; text-align: center; }
+  .links { justify-content: center; }
 }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="mark">
-    <img src="icon.png" alt="TripUp app icon">
-  </div>
-  <span class="eyebrow">Prototype</span>
-  <h1>TripUp</h1>
-  <p class="desc">A group-trip app, click-through: poll a dinner spot, split the bill by item, settle up.</p>
-  <div class="links">
-    <a class="btn btn-primary" href="/app/" target="_blank" rel="noopener">Open full screen ↗</a>
-    <a class="btn btn-secondary" href="https://github.com/leonardobressan-99/TripUp" target="_blank" rel="noopener">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-      GitHub
-    </a>
-  </div>
-</div>
+<div class="top-header"><b>Leonardo Bressan</b> · Bending Spoons · Task #3</div>
 
-<div class="stage-wrap">
-  <iframe class="stage" id="stage" src="/app/" title="TripUp interactive prototype" loading="lazy"></iframe>
-  <button class="restart-btn" id="restart-btn" type="button">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.87" />
-      <path d="M13.5 2.5v3h-3" />
-    </svg>
-    Restart prototype
-  </button>
+<div class="page">
+
+  <div class="text-col">
+    <img class="logo" src="logo.png" alt="TripUp">
+
+    <p class="desc">TripUp helps a group plan a trip together — vote on plans, split the bill by item, and settle up without spreadsheets.</p>
+
+    <div class="section-label">Scenario</div>
+    <p class="desc">Open the app, go to the trip list, add Ren, create a poll for the dinner, split the bill by item and exclude anyone who didn't eat or drink a dish, review the consolidated, netted balances, then settle up and confirm to the group.</p>
+
+    <div class="links">
+      <a class="btn btn-primary" href="/app/" target="_blank" rel="noopener">Open full screen ↗</a>
+      <a class="btn btn-secondary" href="https://github.com/leonardobressan-99/TripUp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+
+  <div class="stage-col">
+    <div class="stage-glow" aria-hidden="true"></div>
+    <iframe class="stage" id="stage" src="/app/" title="TripUp interactive prototype" loading="lazy"></iframe>
+    <button class="restart-btn" id="restart-btn" type="button">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.87" />
+        <path d="M13.5 2.5v3h-3" />
+      </svg>
+      Restart prototype
+    </button>
+  </div>
+
 </div>
 
 <script>

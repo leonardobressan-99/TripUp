@@ -63,6 +63,9 @@ function AppInner() {
   const [memberJoinDates, setMemberJoinDates] = useState<Record<string, string>>(() =>
     Object.fromEntries(trips[0].memberIds.map((id) => [id, trips[0].startDate]))
   );
+  const [memberJoinTimes, setMemberJoinTimes] = useState<Record<string, string>>(() =>
+    Object.fromEntries(trips[0].memberIds.map((id) => [id, "00:00"]))
+  );
   const [autoOpenInvite, setAutoOpenInvite] = useState(false);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
@@ -124,6 +127,10 @@ function AppInner() {
     });
 
     setSavedExpenses((prevSaved) => prevSaved.map(resync));
+  }
+
+  function updateMemberJoinTime(memberId: string, time: string) {
+    setMemberJoinTimes((prev) => ({ ...prev, [memberId]: time }));
   }
 
   function handleCreatePoll(question: string, optionLabels: string[], category: ExpenseCategory) {
@@ -259,6 +266,7 @@ function AppInner() {
           memberIds={tripMemberIds}
           allMembers={allMembers}
           memberJoinDates={memberJoinDates}
+          memberJoinTimes={memberJoinTimes}
           dayOptions={dayOptions}
           tripStartDate={trip.startDate}
           autoOpenInvite={autoOpenInvite}
@@ -269,9 +277,11 @@ function AppInner() {
             }
             setTripMemberIds((prev) => (prev.includes(member.id) ? prev : [...prev, member.id]));
             updateMemberJoinDate(member.id, TODAY_DATE);
+            updateMemberJoinTime(member.id, "00:00");
           }}
           onRemoveMember={(id) => setTripMemberIds((prev) => prev.filter((m) => m !== id))}
           onUpdateJoinDate={updateMemberJoinDate}
+          onUpdateJoinTime={updateMemberJoinTime}
         />
       )}
 
@@ -387,7 +397,7 @@ function App() {
         <button
           type="button"
           onClick={() => setResetKey((k) => k + 1)}
-          className="fixed top-6 right-6 z-50 flex items-center gap-2 rounded-full border-[1.5px] border-[rgba(28,37,65,0.14)] bg-white px-5 py-3 font-body font-bold text-ink text-[14px] shadow-[0_8px_20px_rgba(28,37,65,0.08)] transition-[box-shadow,border-color] hover:border-ink hover:shadow-[0_10px_24px_rgba(28,37,65,0.14)]"
+          className="fixed top-6 right-6 z-50 flex items-center gap-2 rounded-[10px] border-[1.5px] border-[rgba(28,37,65,0.14)] bg-white px-5 py-3 font-body font-bold text-ink text-[14px] shadow-[0_8px_20px_rgba(28,37,65,0.08)] transition-[box-shadow,border-color] hover:border-ink hover:shadow-[0_10px_24px_rgba(28,37,65,0.14)]"
         >
           <svg
             viewBox="0 0 16 16"
