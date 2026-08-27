@@ -54,6 +54,8 @@ export default function PollDetail({
   const votedIds = new Set(poll.options.flatMap((o) => o.voterIds));
   const roster = participantIds.map((id) => allMembers[id]).filter(Boolean);
   const pendingCount = roster.filter((m) => !votedIds.has(m.id) && !m.isYou).length;
+  const youMember = roster.find((m) => m.isYou);
+  const youNeedToVote = !poll.closed && !!youMember && !votedIds.has(youMember.id);
 
   function handleNudge() {
     onNudge();
@@ -106,6 +108,18 @@ export default function PollDetail({
             {votedIds.size} of {roster.length} voted
           </p>
         </div>
+
+        {youNeedToVote && (
+          <div
+            className="mt-3 rounded-[10px] px-4 py-3 flex items-center gap-2.5"
+            style={{ backgroundColor: "rgba(255,92,114,0.10)", border: "1.5px solid rgba(255,92,114,0.45)" }}
+          >
+            <span className="text-[16px]">🗳️</span>
+            <span className="font-body font-bold text-coral text-[13px]">
+              You haven't voted yet — pick an option below
+            </span>
+          </div>
+        )}
 
         {!poll.closed && pendingCount > 0 && (
           <div className="mt-3">
