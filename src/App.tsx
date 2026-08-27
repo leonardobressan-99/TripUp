@@ -67,6 +67,12 @@ function AppInner() {
     Object.fromEntries(trips[0].memberIds.map((id) => [id, "00:00"]))
   );
   const [autoOpenInvite, setAutoOpenInvite] = useState(false);
+  // Whether the Home -> TripDetail hero red-gradient fade has already
+  // played this session. Lifted here rather than kept in TripDetail's own
+  // state: that screen fully unmounts and remounts on every trip
+  // navigation (e.g. visiting Participants and coming back), so local
+  // state would replay the fade every time instead of just once.
+  const [heroIntroPlayed, setHeroIntroPlayed] = useState(false);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
   const [settlements, setSettlements] = useState<SettlementRecord[]>([
@@ -227,6 +233,8 @@ function AppInner() {
           poll={poll}
           settlements={settlements}
           onSettleBalance={handleSettleBalance}
+          heroIntroPlayed={heroIntroPlayed}
+          onHeroIntroPlayed={() => setHeroIntroPlayed(true)}
         />
       )}
 

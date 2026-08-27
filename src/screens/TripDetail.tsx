@@ -43,6 +43,14 @@ type TripDetailProps = {
   poll: Poll | null;
   settlements: SettlementRecord[];
   onSettleBalance: (fromId: string, toId: string, amount: number) => void;
+  // Whether the Home -> TripDetail hero red-gradient fade has already
+  // played this session. Lifted up to App.tsx rather than kept as local
+  // state here: this screen fully unmounts and remounts on every trip
+  // navigation (visiting Participants and coming back, for instance), so
+  // local state would replay the fade every single time instead of just
+  // the one real first arrival from Home.
+  heroIntroPlayed: boolean;
+  onHeroIntroPlayed: () => void;
 };
 
 const TABS: Tab[] = ["summary", "itinerary", "budget"];
@@ -179,6 +187,8 @@ export default function TripDetail({
   poll,
   settlements,
   onSettleBalance,
+  heroIntroPlayed,
+  onHeroIntroPlayed,
 }: TripDetailProps) {
   const [tab, setTab] = useState<Tab>(initialTab ?? "summary");
   const [tabReady, setTabReady] = useState(false);
@@ -192,9 +202,12 @@ export default function TripDetail({
   // the two colors change instantly the moment the shared hero box lands
   // here, reading as a flash right as the box finishes resizing. Fading
   // the red tint out over the smaller card's dark gradient smooths that
-  // handoff - but only once: this flag lives on the screen itself, not
-  // on the Summary tab's own remounting subtree, so switching tabs and
-  // back doesn't replay it.
+  // handoff - but whether it's already played lives in App.tsx
+  // (heroIntroPlayed), not as local state here: this screen fully
+  // unmounts and remounts on every trip navigation (visiting
+  // Participants and coming back, for instance), so local state
+  // replayed the fade - and the flash it's meant to hide - on every
+  // single remount instead of just the one real first arrival from Home.
   //
   // Driven by plain state + a CSS transition rather than Framer Motion's
   // initial/animate props: the tab-switch AnimatePresence above is
@@ -204,7 +217,6 @@ export default function TripDetail({
   // inside it - so a motion.div here would jump straight to its `animate`
   // value with no visible fade at all, exactly on the one render this
   // needs to actually play.
-  const [heroFadeDone, setHeroFadeDone] = useState(false);
   const [heroRedVisible, setHeroRedVisible] = useState(true);
   const tabIndex = TABS.indexOf(tab);
   const prevIndexRef = useRef(tabIndex);
@@ -217,6 +229,7 @@ export default function TripDetail({
     prevIndexRef.current = tabIndex;
   }, [tabIndex]);
   useEffect(() => {
+    if (heroIntroPlayed) return;
     // Two rAFs, not one: the browser needs to actually paint the starting
     // opacity:1 frame before the flip to 0 is what triggers the CSS
     // transition. A single rAF can still land in the same paint as the
@@ -225,12 +238,13 @@ export default function TripDetail({
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => setHeroRedVisible(false));
     });
-    const t = setTimeout(() => setHeroFadeDone(true), HERO_TRANSITION.duration * 1000 + 50);
+    const t = setTimeout(onHeroIntroPlayed, HERO_TRANSITION.duration * 1000 + 50);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
       clearTimeout(t);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const trip = trips[0];
@@ -370,7 +384,7 @@ export default function TripDetail({
                       background: "linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0) 70%)",
                     }}
                   />
-                  {!heroFadeDone && (
+                  {!heroIntroPlayed && (
                     <div
                       className="absolute inset-0 pointer-events-none"
                       style={{
