@@ -79,7 +79,7 @@ export default function ReceiptReview({
         </div>
 
         <div className="flex justify-center mt-3">
-          <button onClick={onRetake} className="font-body font-bold text-coral text-[13px]">
+          <button onClick={onRetake} className="font-body font-bold text-coral text-[15px]">
             📸 Retake photo
           </button>
         </div>
