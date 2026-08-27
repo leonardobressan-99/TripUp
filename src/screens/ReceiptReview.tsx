@@ -126,7 +126,6 @@ export default function ReceiptReview({
                   onUpdateCategory={(category: ExpenseCategory) => updateItem(item.id, { category })}
                   onToggleMember={(memberId) => toggleMember(item.id, memberId)}
                   onRemove={() => setPendingRemoveId(item.id)}
-                  removeIconVisibility="onOpen"
                   participantIds={participantIds}
                   allMembers={allMembers}
                 />

@@ -13,7 +13,6 @@ type ExpenseItemRowProps = {
   onUpdateCategory: (category: ExpenseCategory) => void;
   onToggleMember: (memberId: string) => void;
   onRemove?: () => void;
-  removeIconVisibility?: "always" | "onOpen";
   autoFocusName?: boolean;
   participantIds: string[];
   allMembers: Record<string, Member>;
@@ -28,15 +27,12 @@ export default function ExpenseItemRow({
   onUpdateCategory,
   onToggleMember,
   onRemove,
-  removeIconVisibility = "always",
   autoFocusName,
   participantIds,
   allMembers,
 }: ExpenseItemRowProps) {
   const excludedCount = participantIds.length - item.splitIds.length;
   const each = item.splitIds.length > 0 ? item.amount / item.splitIds.length : 0;
-  const showRemoveIcon =
-    !!onRemove && (removeIconVisibility === "always" || (removeIconVisibility === "onOpen" && isOpen));
 
   return (
     <div className="bg-white rounded-[20px] overflow-hidden" style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}>
@@ -58,18 +54,6 @@ export default function ExpenseItemRow({
           <div className="flex items-center gap-1 bg-[#F2A93B]/15 rounded-full px-2 py-1 shrink-0">
             <span className="text-[10px]">⚠️</span>
           </div>
-        )}
-        {showRemoveIcon && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove?.();
-            }}
-            className="shrink-0"
-            aria-label="Remove item"
-          >
-            <img src={deleteBadge} alt="" className="w-7 h-7" />
-          </button>
         )}
         <motion.svg
           width="14"
@@ -181,6 +165,17 @@ export default function ExpenseItemRow({
                   })}
                 </div>
               </div>
+
+              {onRemove && (
+                <button
+                  onClick={onRemove}
+                  className="mt-4 w-full h-11 rounded-[10px] bg-coral/10 flex items-center justify-center gap-2"
+                  style={{ border: "1.5px solid #FF5C72" }}
+                >
+                  <img src={deleteBadge} alt="" className="w-5 h-5" />
+                  <span className="font-body font-bold text-coral text-[14px]">Remove item</span>
+                </button>
+              )}
             </div>
           </motion.div>
         )}

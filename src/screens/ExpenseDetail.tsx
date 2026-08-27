@@ -210,7 +210,6 @@ export default function ExpenseDetail({
                             onUpdateCategory={(category) => updateItem(item.id, { category })}
                             onToggleMember={(memberId) => toggleMember(item.id, memberId)}
                             onRemove={() => setPendingRemoveId(item.id)}
-                            removeIconVisibility="onOpen"
                             autoFocusName={item.name === ""}
                             participantIds={participantIds}
                             allMembers={allMembers}
