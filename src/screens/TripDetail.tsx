@@ -53,7 +53,7 @@ type BudgetStep = "list" | "settle" | "confirmed" | "recap";
 // Kept identical to Home's HERO_TRANSITION - the two ends of a shared
 // layoutId transition need matching timing/easing or the handoff itself
 // looks like a stutter partway through.
-const HERO_TRANSITION = { duration: 0.95, ease: [0.4, 0, 0.2, 1] as const };
+const HERO_TRANSITION = { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const };
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({

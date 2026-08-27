@@ -35,7 +35,7 @@ const FLAG_PALETTE = ["14,165,160", "255,92,114", "124,58,237", "217,119,6", "37
 // ~150ms, reading as a jump rather than a glide. A longer duration with
 // a symmetric ease-in-out spreads the motion evenly across the whole
 // transition instead.
-const HERO_TRANSITION = { duration: 0.95, ease: [0.4, 0, 0.2, 1] as const };
+const HERO_TRANSITION = { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const };
 
 export default function Home({
   onOpenTrip,
