@@ -95,10 +95,10 @@ export default function ReceiptReview({
           </div>
         </div>
 
-        <div className="flex justify-center mt-3">
+        <div className="flex justify-center mt-8">
           <div className="bg-teal/10 rounded-full px-5 py-2">
             <span className="font-body font-bold text-teal text-[13px] uppercase tracking-wide">
-              ✨ AI recognized {items.length} items
+              AI recognized {items.length} items
             </span>
           </div>
         </div>
