@@ -867,14 +867,9 @@ export default function TripDetail({
                       </div>
                     </div>
 
-                    <div
-                      className="w-full rounded-[20px] p-5 mt-4 text-center"
-                      style={{ backgroundColor: "rgba(14,165,160,0.08)", border: "1.5px solid rgba(14,165,160,0.3)" }}
-                    >
-                      <p className="font-body font-bold text-ink text-[15px] leading-snug">
-                        It's your last night in Lisbon and everyone's settled up — want to end the trip?
-                      </p>
-                    </div>
+                    <p className="w-full mt-6 px-2 text-center font-body font-bold text-ink text-[15px] leading-snug">
+                      It's your last night in Lisbon and everyone's settled up — want to end the trip?
+                    </p>
 
                     <div className="w-full flex flex-col gap-3 mt-6">
                       <button

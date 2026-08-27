@@ -81,11 +81,7 @@ export default function PollDetail({
           {categoryMeta[poll.category].label}
         </span>
         <h1 className="font-body font-bold text-ink text-[28px] leading-tight mt-2">{poll.question}</h1>
-        <p className="font-body text-grey-ink text-[13px] mt-1.5">
-          {poll.closed
-            ? "Poll closed"
-            : `${totalVotes} vote${totalVotes === 1 ? "" : "s"} so far`}
-        </p>
+        {poll.closed && <p className="font-body text-grey-ink text-[13px] mt-1.5">Poll closed</p>}
 
         <div className="flex items-center gap-2.5 mt-4">
           {roster.map((m) => {
