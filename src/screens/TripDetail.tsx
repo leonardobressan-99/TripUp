@@ -145,8 +145,8 @@ function BalanceRow({
       ) : nudgeable ? (
         <button
           onClick={onNudge}
-          className="w-full h-9 rounded-[10px] flex items-center justify-center gap-1.5"
-          style={{ border: "1.5px solid #0EA5A0" }}
+          className="w-full h-11 rounded-[10px] flex items-center justify-center gap-1.5"
+          style={{ border: "1.5px solid #0EA5A0", backgroundColor: "rgba(14,165,160,0.1)" }}
         >
           <span className="text-[13px]">🔔</span>
           <span className="font-body font-bold text-teal text-[13px]">Nudge</span>

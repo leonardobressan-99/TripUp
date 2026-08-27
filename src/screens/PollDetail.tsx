@@ -111,8 +111,8 @@ export default function PollDetail({
           <div className="mt-3">
             <button
               onClick={handleNudge}
-              className="w-full h-[46px] rounded-[10px] flex items-center justify-center gap-2"
-              style={{ border: "1.5px solid #0EA5A0" }}
+              className="w-full h-11 rounded-[10px] flex items-center justify-center gap-2"
+              style={{ border: "1.5px solid #0EA5A0", backgroundColor: "rgba(14,165,160,0.1)" }}
             >
               <span className="text-[15px]">🔔</span>
               <span className="font-body font-bold text-teal text-[14px]">
