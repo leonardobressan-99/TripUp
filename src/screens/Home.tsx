@@ -28,7 +28,14 @@ const today = `${todayDate.toLocaleDateString("en-US", { weekday: "long" })}, ${
 
 const FLAG_PALETTE = ["14,165,160", "255,92,114", "124,58,237", "217,119,6", "37,99,235"];
 
-const HERO_TRANSITION = { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const };
+// Slower and more gradual than a typical UI transition on purpose: this
+// box changes both size and aspect ratio dramatically (full-width hero
+// down to a small rounded card), and the sharp "fast start" of an
+// easeOut-style curve concentrated most of that motion in the first
+// ~150ms, reading as a jump rather than a glide. A longer duration with
+// a symmetric ease-in-out spreads the motion evenly across the whole
+// transition instead.
+const HERO_TRANSITION = { duration: 0.95, ease: [0.4, 0, 0.2, 1] as const };
 
 export default function Home({
   onOpenTrip,
