@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Switch from "./Switch";
 import Avatar from "./Avatar";
-import checkBadge from "../assets/icons/check-badge.svg";
 import { categoryMeta, CATEGORY_ORDER, type ExpenseCategory, type Member, type WorkingItem } from "../store/mockData";
 
 type ExpenseItemRowProps = {
@@ -13,6 +12,7 @@ type ExpenseItemRowProps = {
   onUpdateCategory: (category: ExpenseCategory) => void;
   onToggleMember: (memberId: string) => void;
   onRemove?: () => void;
+  removeIconVisibility?: "always" | "onOpen";
   autoFocusName?: boolean;
   participantIds: string[];
   allMembers: Record<string, Member>;
@@ -27,12 +27,15 @@ export default function ExpenseItemRow({
   onUpdateCategory,
   onToggleMember,
   onRemove,
+  removeIconVisibility = "always",
   autoFocusName,
   participantIds,
   allMembers,
 }: ExpenseItemRowProps) {
   const excludedCount = participantIds.length - item.splitIds.length;
   const each = item.splitIds.length > 0 ? item.amount / item.splitIds.length : 0;
+  const showRemoveIcon =
+    !!onRemove && (removeIconVisibility === "always" || (removeIconVisibility === "onOpen" && isOpen));
 
   return (
     <div className="bg-white rounded-[20px] overflow-hidden" style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}>
@@ -55,7 +58,18 @@ export default function ExpenseItemRow({
             <span className="text-[10px]">⚠️</span>
           </div>
         )}
-        {item.confirmed === true && <img src={checkBadge} alt="" className="w-5 h-5 shrink-0" />}
+        {showRemoveIcon && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove?.();
+            }}
+            className="w-7 h-7 rounded-full bg-coral/10 flex items-center justify-center shrink-0"
+            aria-label="Remove item"
+          >
+            <span className="text-[13px]">🗑️</span>
+          </button>
+        )}
         <motion.svg
           width="14"
           height="14"
@@ -166,12 +180,6 @@ export default function ExpenseItemRow({
                   })}
                 </div>
               </div>
-
-              {onRemove && (
-                <button onClick={onRemove} className="mt-4 font-body font-bold text-coral text-[13px]">
-                  Remove item
-                </button>
-              )}
             </div>
           </motion.div>
         )}
