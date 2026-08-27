@@ -5,6 +5,7 @@ import AnimatedAmount from "../components/AnimatedAmount";
 import ExpenseItemRow from "../components/ExpenseItemRow";
 import ScreenHeader from "../components/ScreenHeader";
 import Avatar from "../components/Avatar";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { categoryMeta, CATEGORY_ORDER, type ExpenseCategory, type Member, type WorkingItem } from "../store/mockData";
 import chevronIcon from "../assets/icons/Right_Arrow.svg";
 
@@ -60,6 +61,8 @@ export default function AddExpense({
   suggestedRestaurantName,
 }: AddExpenseProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
+  const pendingRemoveItem = items.find((it) => it.id === pendingRemoveId);
   const [pickingPayer, setPickingPayer] = useState(false);
 
   const amount = items.reduce((sum, i) => sum + i.amount, 0);
@@ -102,6 +105,7 @@ export default function AddExpense({
   function removeItem(id: string) {
     setItems((prev) => prev.filter((it) => it.id !== id));
     setExpandedId(null);
+    setPendingRemoveId(null);
   }
 
   const groups: { category: ExpenseCategory; items: WorkingItem[]; total: number }[] = CATEGORY_ORDER.map(
@@ -260,7 +264,7 @@ export default function AddExpense({
                           layout
                           initial={{ opacity: 0, scale: 0.9, y: 10 }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
+                          exit={{ opacity: 0, scale: 0.9, x: -40 }}
                           transition={{ type: "spring", stiffness: 400, damping: 28 }}
                         >
                           <ExpenseItemRow
@@ -274,7 +278,7 @@ export default function AddExpense({
                             }}
                             onUpdateCategory={(category) => updateItem(item.id, { category })}
                             onToggleMember={(memberId) => toggleMember(item.id, memberId)}
-                            onRemove={() => removeItem(item.id)}
+                            onRemove={() => setPendingRemoveId(item.id)}
                             removeIconVisibility="onOpen"
                             autoFocusName={item.name === ""}
                             participantIds={participantIds}
@@ -300,6 +304,14 @@ export default function AddExpense({
           <span className="font-body font-bold text-white text-[17px]">Save expense</span>
         </button>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingRemoveItem}
+        title="Delete item?"
+        message={`"${pendingRemoveItem?.name || "Untitled item"}" will be removed from this expense.`}
+        onConfirm={() => pendingRemoveId && removeItem(pendingRemoveId)}
+        onCancel={() => setPendingRemoveId(null)}
+      />
     </motion.div>
   );
 }

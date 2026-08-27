@@ -84,7 +84,7 @@ export default function PollDetail({
         <p className="font-body text-grey-ink text-[13px] mt-1.5">
           {poll.closed
             ? "Poll closed"
-            : `${totalVotes} vote${totalVotes === 1 ? "" : "s"} so far · tap an option to vote`}
+            : `${totalVotes} vote${totalVotes === 1 ? "" : "s"} so far`}
         </p>
 
         <div className="flex items-center gap-2.5 mt-4">

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Switch from "./Switch";
 import Avatar from "./Avatar";
+import deleteBadge from "../assets/icons/Delete-badge.svg";
 import { categoryMeta, CATEGORY_ORDER, type ExpenseCategory, type Member, type WorkingItem } from "../store/mockData";
 
 type ExpenseItemRowProps = {
@@ -64,10 +65,10 @@ export default function ExpenseItemRow({
               e.stopPropagation();
               onRemove?.();
             }}
-            className="w-7 h-7 rounded-full bg-coral/10 flex items-center justify-center shrink-0"
+            className="shrink-0"
             aria-label="Remove item"
           >
-            <span className="text-[13px]">🗑️</span>
+            <img src={deleteBadge} alt="" className="w-7 h-7" />
           </button>
         )}
         <motion.svg

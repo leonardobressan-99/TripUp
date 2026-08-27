@@ -4,6 +4,7 @@ import StatusBar from "../components/StatusBar";
 import ScreenHeader from "../components/ScreenHeader";
 import Avatar from "../components/Avatar";
 import IOSKeyboard from "../components/IOSKeyboard";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { members as canonicalMembers, formatSingleDate, type Member } from "../store/mockData";
 import deleteBadge from "../assets/icons/Delete-badge.svg";
 
@@ -53,7 +54,9 @@ export default function ParticipantsDetail({
   const [showInvite, setShowInvite] = useState(!!autoOpenInvite);
   const [query, setQuery] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const pendingRemoveMember = pendingRemoveId ? allMembers[pendingRemoveId] : undefined;
 
   useEffect(() => {
     if (autoOpenInvite) setShowInvite(true);
@@ -113,11 +116,20 @@ export default function ParticipantsDetail({
         <p className="font-body text-grey-ink text-[14px] mt-1 mb-5">{currentMembers.length} people on this trip</p>
 
         <div className="flex flex-col gap-3">
+          <AnimatePresence initial={false}>
           {currentMembers.map((m) => {
             const joinDate = memberJoinDates[m.id] ?? tripStartDate;
             const joinTime = memberJoinTimes[m.id] ?? "00:00";
             return (
-              <Card key={m.id} className="flex items-center gap-3">
+              <motion.div
+                key={m.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, x: -40 }}
+                transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              >
+              <Card className="flex items-center gap-3">
                 <Avatar member={m} size={44} />
                 <div className="flex-1 min-w-0">
                   <p className="font-body font-bold text-ink text-[15px] flex items-center gap-1.5 flex-wrap">
@@ -162,7 +174,7 @@ export default function ParticipantsDetail({
                 </div>
                 {!m.isYou && !m.isOrganizer && (
                   <button
-                    onClick={() => onRemoveMember(m.id)}
+                    onClick={() => setPendingRemoveId(m.id)}
                     aria-label={`Remove ${m.name}`}
                     className="shrink-0"
                   >
@@ -170,8 +182,10 @@ export default function ParticipantsDetail({
                   </button>
                 )}
               </Card>
+              </motion.div>
             );
           })}
+          </AnimatePresence>
         </div>
 
         <button
@@ -274,6 +288,18 @@ export default function ParticipantsDetail({
           />
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        open={!!pendingRemoveMember}
+        title="Remove participant?"
+        message={`${pendingRemoveMember?.name ?? "This person"} will be removed from the trip and from future splits.`}
+        confirmLabel="Remove"
+        onConfirm={() => {
+          if (pendingRemoveId) onRemoveMember(pendingRemoveId);
+          setPendingRemoveId(null);
+        }}
+        onCancel={() => setPendingRemoveId(null)}
+      />
     </div>
   );
 }

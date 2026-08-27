@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
 import ExpenseItemRow from "../components/ExpenseItemRow";
 import ScreenHeader from "../components/ScreenHeader";
+import ConfirmDialog from "../components/ConfirmDialog";
 import receiptPhoto from "../assets/images/skewed-receipt-card.jpg";
 import {
   scannedReceiptItems,
@@ -34,6 +35,8 @@ export default function ReceiptReview({
     scannedReceiptItems.map((i) => ({ ...i, splitIds: [...defaultSplitIds] }))
   );
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
+  const pendingRemoveItem = items.find((it) => it.id === pendingRemoveId);
 
   function updateItem(id: string, patch: Partial<WorkingItem>) {
     setItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
@@ -52,6 +55,7 @@ export default function ReceiptReview({
   function removeItem(id: string) {
     setItems((prev) => prev.filter((it) => it.id !== id));
     setExpandedId(null);
+    setPendingRemoveId(null);
   }
 
   const categoryTotals = CATEGORY_ORDER.map((category) => ({
@@ -98,25 +102,35 @@ export default function ReceiptReview({
         </div>
 
         <div className="flex flex-col gap-3 mt-5">
-          {items.map((item) => (
-            <ExpenseItemRow
-              key={item.id}
-              item={item}
-              isOpen={expandedId === item.id}
-              onToggleOpen={() => setExpandedId(expandedId === item.id ? null : item.id)}
-              onUpdateName={(name) => updateItem(item.id, { name })}
-              onUpdateAmount={(value) => {
-                const parsed = parseFloat(value.replace(",", "."));
-                updateItem(item.id, { amount: Number.isNaN(parsed) ? 0 : parsed, confirmed: true });
-              }}
-              onUpdateCategory={(category: ExpenseCategory) => updateItem(item.id, { category })}
-              onToggleMember={(memberId) => toggleMember(item.id, memberId)}
-              onRemove={() => removeItem(item.id)}
-              removeIconVisibility="always"
-              participantIds={participantIds}
-              allMembers={allMembers}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {items.map((item) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, x: -40 }}
+                transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              >
+                <ExpenseItemRow
+                  item={item}
+                  isOpen={expandedId === item.id}
+                  onToggleOpen={() => setExpandedId(expandedId === item.id ? null : item.id)}
+                  onUpdateName={(name) => updateItem(item.id, { name })}
+                  onUpdateAmount={(value) => {
+                    const parsed = parseFloat(value.replace(",", "."));
+                    updateItem(item.id, { amount: Number.isNaN(parsed) ? 0 : parsed, confirmed: true });
+                  }}
+                  onUpdateCategory={(category: ExpenseCategory) => updateItem(item.id, { category })}
+                  onToggleMember={(memberId) => toggleMember(item.id, memberId)}
+                  onRemove={() => setPendingRemoveId(item.id)}
+                  removeIconVisibility="always"
+                  participantIds={participantIds}
+                  allMembers={allMembers}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -140,6 +154,14 @@ export default function ReceiptReview({
           <span className="font-body font-bold text-white text-[16px]">Use this split</span>
         </button>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingRemoveItem}
+        title="Delete item?"
+        message={`"${pendingRemoveItem?.name || "Untitled item"}" will be removed from this receipt.`}
+        onConfirm={() => pendingRemoveId && removeItem(pendingRemoveId)}
+        onCancel={() => setPendingRemoveId(null)}
+      />
     </motion.div>
   );
 }

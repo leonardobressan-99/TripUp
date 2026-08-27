@@ -4,6 +4,7 @@ import StatusBar from "../components/StatusBar";
 import ScreenHeader from "../components/ScreenHeader";
 import ExpenseItemRow from "../components/ExpenseItemRow";
 import Avatar from "../components/Avatar";
+import ConfirmDialog from "../components/ConfirmDialog";
 import {
   formatSingleDate,
   categoryMeta,
@@ -70,6 +71,8 @@ export default function ExpenseDetail({
     }))
   );
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [pendingRemoveId, setPendingRemoveId] = useState<string | null>(null);
+  const pendingRemoveItem = items.find((it) => it.id === pendingRemoveId);
   const [savedSnapshot, setSavedSnapshot] = useState(() => snapshotOf(items));
   const dirty = snapshotOf(items) !== savedSnapshot;
 
@@ -109,6 +112,7 @@ export default function ExpenseDetail({
   function removeItem(id: string) {
     setItems((prev) => prev.filter((it) => it.id !== id));
     setExpandedId(null);
+    setPendingRemoveId(null);
   }
 
   const total = items.reduce((s, i) => s + i.amount, 0);
@@ -191,7 +195,7 @@ export default function ExpenseDetail({
                           layout
                           initial={{ opacity: 0, scale: 0.9, y: 10 }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
+                          exit={{ opacity: 0, scale: 0.9, x: -40 }}
                           transition={{ type: "spring", stiffness: 400, damping: 28 }}
                         >
                           <ExpenseItemRow
@@ -205,7 +209,7 @@ export default function ExpenseDetail({
                             }}
                             onUpdateCategory={(category) => updateItem(item.id, { category })}
                             onToggleMember={(memberId) => toggleMember(item.id, memberId)}
-                            onRemove={() => removeItem(item.id)}
+                            onRemove={() => setPendingRemoveId(item.id)}
                             removeIconVisibility="onOpen"
                             autoFocusName={item.name === ""}
                             participantIds={participantIds}
@@ -241,6 +245,14 @@ export default function ExpenseDetail({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        open={!!pendingRemoveItem}
+        title="Delete item?"
+        message={`"${pendingRemoveItem?.name || "Untitled item"}" will be removed from this expense.`}
+        onConfirm={() => pendingRemoveId && removeItem(pendingRemoveId)}
+        onCancel={() => setPendingRemoveId(null)}
+      />
     </motion.div>
   );
 }
