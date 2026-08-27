@@ -53,7 +53,7 @@ type BudgetStep = "list" | "settle" | "confirmed" | "recap";
 // Kept identical to Home's HERO_TRANSITION - the two ends of a shared
 // layoutId transition need matching timing/easing or the handoff itself
 // looks like a stutter partway through.
-const HERO_TRANSITION = { duration: 0.75, ease: [0.4, 0, 0.2, 1] as const };
+const HERO_TRANSITION = { duration: 0.5, ease: [0.4, 0, 0.2, 1] as const };
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
@@ -187,6 +187,25 @@ export default function TripDetail({
   const [activeTxn, setActiveTxn] = useState<BalanceTxn | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  // Home's hero uses a vivid red-tinted gradient; this screen's smaller
+  // card uses a plain dark one for text legibility. Left as a bare swap,
+  // the two colors change instantly the moment the shared hero box lands
+  // here, reading as a flash right as the box finishes resizing. Fading
+  // the red tint out over the smaller card's dark gradient smooths that
+  // handoff - but only once: this flag lives on the screen itself, not
+  // on the Summary tab's own remounting subtree, so switching tabs and
+  // back doesn't replay it.
+  //
+  // Driven by plain state + a CSS transition rather than Framer Motion's
+  // initial/animate props: the tab-switch AnimatePresence above is
+  // `initial={false}` for a good reason (so the whole tab doesn't slide
+  // in from the side on this very first render), but that setting also
+  // suppresses the `initial` prop on every motion component nested
+  // inside it - so a motion.div here would jump straight to its `animate`
+  // value with no visible fade at all, exactly on the one render this
+  // needs to actually play.
+  const [heroFadeDone, setHeroFadeDone] = useState(false);
+  const [heroRedVisible, setHeroRedVisible] = useState(true);
   const tabIndex = TABS.indexOf(tab);
   const prevIndexRef = useRef(tabIndex);
   const direction = tabIndex > prevIndexRef.current ? 1 : -1;
@@ -197,6 +216,22 @@ export default function TripDetail({
   useEffect(() => {
     prevIndexRef.current = tabIndex;
   }, [tabIndex]);
+  useEffect(() => {
+    // Two rAFs, not one: the browser needs to actually paint the starting
+    // opacity:1 frame before the flip to 0 is what triggers the CSS
+    // transition. A single rAF can still land in the same paint as the
+    // initial render on some browsers, skipping the transition entirely.
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setHeroRedVisible(false));
+    });
+    const t = setTimeout(() => setHeroFadeDone(true), HERO_TRANSITION.duration * 1000 + 50);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      clearTimeout(t);
+    };
+  }, []);
 
   const trip = trips[0];
   const tripMembers = memberIds.map((id) => allMembers[id]).filter(Boolean);
@@ -335,6 +370,17 @@ export default function TripDetail({
                       background: "linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0) 70%)",
                     }}
                   />
+                  {!heroFadeDone && (
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(180deg, rgba(214,20,20,0.88) 0%, rgba(224,40,40,0.72) 22%, rgba(200,40,40,0.42) 42%, rgba(20,10,15,0.1) 58%, rgba(10,5,10,0.6) 100%)",
+                        opacity: heroRedVisible ? 1 : 0,
+                        transition: `opacity ${HERO_TRANSITION.duration}s ease-in`,
+                      }}
+                    />
+                  )}
                 </motion.div>
                 <div className="absolute left-5 bottom-5 right-5 z-10">
                   <p className="font-body font-bold text-white/90 text-[13px]">
