@@ -8,6 +8,7 @@ import TripMap from "../components/TripMap";
 import ActionSheet from "../components/ActionSheet";
 import Avatar from "../components/Avatar";
 import AvatarStack from "../components/AvatarStack";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { PollIcon, ExpenseIcon, MemberIcon } from "../components/ActionIcons";
 import checkBadge from "../assets/icons/check-badge.svg";
 import creditCardIcon from "../assets/images/CreditCard.png";
@@ -1023,54 +1024,17 @@ export default function TripDetail({
       />
 
       {/* end trip confirmation */}
-      <AnimatePresence>
-        {showEndConfirm && (
-          <>
-            <motion.div
-              className="absolute inset-0 z-40"
-              style={{ background: "rgba(28,37,65,0.4)" }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setShowEndConfirm(false)}
-            />
-            <motion.div
-              className="absolute left-8 right-8 z-50 overflow-hidden"
-              style={{ top: "50%", backgroundColor: "#FAF6EE", borderRadius: 20 }}
-              initial={{ opacity: 0, scale: 0.92, y: "-46%" }}
-              animate={{ opacity: 1, scale: 1, y: "-50%" }}
-              exit={{ opacity: 0, scale: 0.92, y: "-46%" }}
-              transition={{ type: "spring", stiffness: 380, damping: 30 }}
-            >
-              <div className="px-6 pt-7 pb-5 text-center">
-                <h2 className="font-body font-bold text-ink text-[17px] mb-2">Are you sure you want to end this trip?</h2>
-                <p className="font-body text-grey-ink text-[14px] leading-relaxed">
-                  All open balances will be marked as settled. This can't be undone.
-                </p>
-              </div>
-              <div className="flex border-t" style={{ borderColor: "rgba(28,37,65,0.1)" }}>
-                <button
-                  onClick={() => setShowEndConfirm(false)}
-                  className="flex-1 h-[52px] font-body font-bold text-ink text-[15px]"
-                >
-                  Cancel
-                </button>
-                <div className="w-px" style={{ backgroundColor: "rgba(28,37,65,0.1)" }} />
-                <button
-                  onClick={() => {
-                    setShowEndConfirm(false);
-                    endTrip();
-                  }}
-                  className="flex-1 h-[52px] font-body font-bold text-coral text-[15px]"
-                >
-                  End trip
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <ConfirmDialog
+        open={showEndConfirm}
+        title="End this trip?"
+        message="All open balances will be marked as settled. This can't be undone."
+        confirmLabel="End trip"
+        onConfirm={() => {
+          setShowEndConfirm(false);
+          endTrip();
+        }}
+        onCancel={() => setShowEndConfirm(false)}
+      />
     </motion.div>
   );
 }
