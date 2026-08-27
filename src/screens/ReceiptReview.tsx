@@ -88,7 +88,10 @@ export default function ReceiptReview({
         </div>
 
         <div className="flex justify-center mt-3">
-          <button onClick={onRetake} className="font-body font-bold text-coral text-[15px]">
+          <button
+            onClick={onRetake}
+            className="font-body font-bold text-coral text-[15px] bg-coral/10 rounded-full px-5 py-2"
+          >
             📸 Retake photo
           </button>
         </div>
@@ -124,7 +127,7 @@ export default function ReceiptReview({
                   onUpdateCategory={(category: ExpenseCategory) => updateItem(item.id, { category })}
                   onToggleMember={(memberId) => toggleMember(item.id, memberId)}
                   onRemove={() => setPendingRemoveId(item.id)}
-                  removeIconVisibility="always"
+                  removeIconVisibility="onOpen"
                   participantIds={participantIds}
                   allMembers={allMembers}
                 />

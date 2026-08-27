@@ -110,10 +110,7 @@ export default function PollDetail({
         </div>
 
         {youNeedToVote && (
-          <div
-            className="mt-3 rounded-[10px] px-4 py-3 flex items-center gap-2.5"
-            style={{ backgroundColor: "rgba(255,92,114,0.10)", border: "1.5px solid rgba(255,92,114,0.45)" }}
-          >
+          <div className="mt-3 flex items-center gap-2.5">
             <span className="text-[16px]">🗳️</span>
             <span className="font-body font-bold text-coral text-[13px]">
               You haven't voted yet — pick an option below
