@@ -172,7 +172,7 @@ function AppInner() {
     setPoll((prev) => {
       if (!prev || prev.closed) return prev;
       const votedIds = new Set(prev.options.flatMap((o) => o.voterIds));
-      const pending = tripMemberIds.filter((id) => !votedIds.has(id));
+      const pending = tripMemberIds.filter((id) => !votedIds.has(id) && !allMembers[id]?.isYou);
       if (pending.length === 0) return prev;
       const options = prev.options.map((o) => ({ ...o, voterIds: [...o.voterIds] }));
       pending.forEach((id) => {

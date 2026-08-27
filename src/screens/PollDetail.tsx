@@ -53,7 +53,7 @@ export default function PollDetail({
 
   const votedIds = new Set(poll.options.flatMap((o) => o.voterIds));
   const roster = participantIds.map((id) => allMembers[id]).filter(Boolean);
-  const pendingCount = roster.length - votedIds.size;
+  const pendingCount = roster.filter((m) => !votedIds.has(m.id) && !m.isYou).length;
 
   function handleNudge() {
     onNudge();
