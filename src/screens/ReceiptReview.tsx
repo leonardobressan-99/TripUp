@@ -49,6 +49,11 @@ export default function ReceiptReview({
     );
   }
 
+  function removeItem(id: string) {
+    setItems((prev) => prev.filter((it) => it.id !== id));
+    setExpandedId(null);
+  }
+
   const categoryTotals = CATEGORY_ORDER.map((category) => ({
     category,
     total: items.filter((i) => i.category === category).reduce((s, i) => s + i.amount, 0),
@@ -106,6 +111,7 @@ export default function ReceiptReview({
               }}
               onUpdateCategory={(category: ExpenseCategory) => updateItem(item.id, { category })}
               onToggleMember={(memberId) => toggleMember(item.id, memberId)}
+              onRemove={() => removeItem(item.id)}
               participantIds={participantIds}
               allMembers={allMembers}
             />
