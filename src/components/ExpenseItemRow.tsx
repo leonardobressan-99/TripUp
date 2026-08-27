@@ -119,6 +119,14 @@ export default function ExpenseItemRow({
                         className={`flex items-center gap-1 rounded-[10px] px-3 py-1.5 font-body font-bold text-[12px] transition-colors ${
                           selected ? "bg-teal text-white" : "bg-[#F0EBDD] text-ink"
                         }`}
+                        style={
+                          selected
+                            ? {
+                                boxShadow:
+                                  "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7)",
+                              }
+                            : undefined
+                        }
                       >
                         <span>{categoryMeta[cat].icon}</span>
                         {categoryMeta[cat].label}
