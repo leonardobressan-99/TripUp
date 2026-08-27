@@ -84,17 +84,15 @@ export default function ReceiptReview({
             style={{ width: 260, height: 184, transform: "rotate(-2deg)", boxShadow: "0 16px 32px rgba(28,37,65,0.25)" }}
           >
             <img src={receiptPhoto} alt="Scanned receipt" className="w-full h-full object-cover" />
+            <button
+              onClick={onRetake}
+              aria-label="Retake photo"
+              className="absolute bottom-2 right-2 w-9 h-9 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: "rgba(255,255,255,0.92)", boxShadow: "0 4px 10px rgba(28,37,65,0.25)" }}
+            >
+              <span className="text-[16px] leading-none">📸</span>
+            </button>
           </div>
-        </div>
-
-        <div className="flex justify-center mt-3">
-          <button
-            onClick={onRetake}
-            className="font-body font-bold text-coral text-[15px] bg-coral/10 rounded-[10px] px-5 py-2"
-            style={{ border: "1.5px solid #FF5C72" }}
-          >
-            📸 Retake photo
-          </button>
         </div>
 
         <div className="flex justify-center mt-3">
