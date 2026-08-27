@@ -261,7 +261,7 @@ export default function TripDetail({
   const rawBalances = computePairwiseBalances(expenseList, memberIds);
   const openBalances = applySettlements(rawBalances, settlements);
   const allSettled = openBalances.length === 0;
-  const recentSettlements = [...settlements].reverse();
+  const recentSettlements = [...settlements].reverse().slice(0, 5);
 
   const openKeys = new Set(openBalances.map((b) => `${b.fromId}-${b.toId}`));
   const latestSettlementByPair = new Map<string, SettlementRecord>();
