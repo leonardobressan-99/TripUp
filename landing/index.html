@@ -36,114 +36,6 @@
 
 html, body { height: 100%; }
 
-/* ---------------------------------------------------------------
-   Intro: clouds drift left-to-right across a soft sky while the
-   wordmark slides in from the left, then everything clears to the
-   right and hands over to the page underneath.
-
-   The overlay is purely decorative, so it keeps pointer-events:none
-   for its whole life - it can never swallow a click even mid-fade.
-   --------------------------------------------------------------- */
-.intro {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  overflow: hidden;
-  pointer-events: none;
-  background: linear-gradient(170deg, #cfe6ea 0%, #e8f2f2 46%, var(--grey-bg) 100%);
-  animation: introSkyOut 0.75s cubic-bezier(0.4, 0, 0.2, 1) 2.35s forwards;
-}
-
-@keyframes introSkyOut {
-  to { opacity: 0; visibility: hidden; }
-}
-
-/* Each cloud is a handful of soft ellipses that blur together into
-   one puffy mass - cheaper and rounder than a hand-drawn SVG path. */
-.cloud {
-  position: absolute;
-  filter: blur(11px);
-  will-change: transform;
-}
-.cloud i {
-  position: absolute;
-  display: block;
-  background: #fff;
-  border-radius: 50%;
-}
-/* a wide, low base slab plus three rounder puffs riding on top */
-.cloud i:nth-child(1) { left: 4%;  bottom: 2%;  width: 92%; height: 46%; }
-.cloud i:nth-child(2) { left: 6%;  bottom: 16%; width: 42%; height: 66%; }
-.cloud i:nth-child(3) { left: 30%; bottom: 22%; width: 46%; height: 82%; }
-.cloud i:nth-child(4) { left: 58%; bottom: 14%; width: 38%; height: 60%; }
-
-/* drift + exit are separate animations on the same element so the
-   steady drift keeps its own rhythm regardless of when it clears */
-.cloud {
-  animation:
-    cloudDrift var(--drift, 26s) linear infinite,
-    cloudOut 1.5s cubic-bezier(0.55, 0, 0.35, 1) 1.75s forwards;
-}
-
-@keyframes cloudDrift {
-  from { transform: translateX(-3%); }
-  to   { transform: translateX(3%); }
-}
-@keyframes cloudOut {
-  to { transform: translateX(125vw); opacity: 0; }
-}
-
-.cloud-1 { top: 12%;  left: -14%; width: 380px; height: 130px; opacity: 0.95; --drift: 22s; }
-.cloud-2 { top: 34%;  left: 12%;  width: 560px; height: 180px; opacity: 1;    --drift: 30s; }
-.cloud-3 { top: 58%;  left: -8%;  width: 460px; height: 150px; opacity: 0.9;  --drift: 26s; }
-.cloud-4 { top: 74%;  left: 44%;  width: 620px; height: 200px; opacity: 0.85; --drift: 34s; }
-.cloud-5 { top: 6%;   left: 56%;  width: 420px; height: 140px; opacity: 0.8;  --drift: 28s; }
-.cloud-6 { top: 46%;  left: 68%;  width: 340px; height: 118px; opacity: 0.75; --drift: 24s; }
-
-.intro-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(300px, 56vw);
-  height: auto;
-  transform: translate(-50%, -50%);
-  animation:
-    introLogoIn 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both,
-    introLogoOut 0.7s cubic-bezier(0.4, 0, 1, 1) 1.95s forwards;
-}
-
-@keyframes introLogoIn {
-  from { transform: translate(calc(-50% - 46vw), -50%); opacity: 0; }
-  to   { transform: translate(-50%, -50%); opacity: 1; }
-}
-@keyframes introLogoOut {
-  to { transform: translate(calc(-50% + 60vw), -50%); opacity: 0; }
-}
-
-/* the page itself settles in just as the sky clears */
-.top-header,
-.text-col,
-.stage-col {
-  animation: introContentIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 2.4s both;
-}
-.text-col { animation-delay: 2.5s; }
-.stage-col { animation-delay: 2.6s; }
-
-@keyframes introContentIn {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* Motion-sensitive visitors get the finished page immediately. */
-@media (prefers-reduced-motion: reduce) {
-  .intro { display: none; }
-  .top-header,
-  .text-col,
-  .stage-col,
-  .cloud,
-  .intro-logo { animation: none; }
-}
-
 body {
   margin: 0;
   height: 100vh;
@@ -323,16 +215,6 @@ body {
 </head>
 <body>
 
-<div class="intro" aria-hidden="true">
-  <div class="cloud cloud-1"><i></i><i></i><i></i><i></i></div>
-  <div class="cloud cloud-2"><i></i><i></i><i></i><i></i></div>
-  <div class="cloud cloud-3"><i></i><i></i><i></i><i></i></div>
-  <div class="cloud cloud-4"><i></i><i></i><i></i><i></i></div>
-  <div class="cloud cloud-5"><i></i><i></i><i></i><i></i></div>
-  <div class="cloud cloud-6"><i></i><i></i><i></i><i></i></div>
-  <img class="intro-logo" src="logo.png" alt="">
-</div>
-
 <div class="top-header"><b>Leonardo Bressan</b> · Bending Spoons · Task #3</div>
 
 <div class="page">
@@ -373,19 +255,6 @@ body {
     var stage = document.getElementById("stage");
     stage.contentWindow.postMessage("tripup:restart", window.location.origin);
   });
-
-  // The clouds drift on a long loop, so once the intro has faded out its
-  // animations would keep ticking for the life of the page against
-  // nothing anyone can see. Drop the whole overlay when it's spent.
-  (function () {
-    var intro = document.querySelector(".intro");
-    if (!intro) return;
-    var done = function () { if (intro.parentNode) intro.remove(); };
-    intro.addEventListener("animationend", function (e) {
-      if (e.animationName === "introSkyOut") done();
-    });
-    setTimeout(done, 5000); // backstop if the fade never fires
-  })();
 </script>
 
 </body>
