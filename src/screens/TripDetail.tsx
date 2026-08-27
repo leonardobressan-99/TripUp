@@ -895,7 +895,7 @@ export default function TripDetail({
                           boxShadow: "0 2px 6px rgba(28,37,65,0.06)",
                         }}
                       >
-                        <span className="font-body font-bold text-teal text-[16px]">Back to Budget</span>
+                        <span className="font-body font-bold text-ink text-[16px]">Back to Budget</span>
                       </button>
                     </div>
                   </motion.div>
