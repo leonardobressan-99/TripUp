@@ -90,7 +90,8 @@ export default function ReceiptReview({
         <div className="flex justify-center mt-3">
           <button
             onClick={onRetake}
-            className="font-body font-bold text-coral text-[15px] bg-coral/10 rounded-full px-5 py-2"
+            className="font-body font-bold text-coral text-[15px] bg-coral/10 rounded-[10px] px-5 py-2"
+            style={{ border: "1.5px solid #FF5C72" }}
           >
             📸 Retake photo
           </button>
