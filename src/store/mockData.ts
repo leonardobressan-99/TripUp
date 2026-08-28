@@ -312,6 +312,18 @@ export function formatSingleDate(iso: string) {
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/**
+ * "Wed, 19 Aug" — the form ItineraryItem.day is stored in, so the itinerary
+ * editor can line a trip date up against the plans already on that day.
+ * Read in UTC because the dates are plain calendar days: parsing "2026-08-19"
+ * in a negative-offset timezone would otherwise shift it to the 18th.
+ */
+export function formatDayLabel(iso: string) {
+  const d = new Date(iso);
+  return `${WEEKDAYS[d.getUTCDay()]}, ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+}
 
 export function formatDateRange(startISO: string, endISO: string) {
   const start = new Date(startISO);

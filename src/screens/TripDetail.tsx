@@ -20,8 +20,9 @@ import {
   formatDateRange,
   formatSingleDate,
   tripSummaryText,
-  itinerary,
+  formatDayLabel,
   type ExpenseHistoryItem,
+  type ItineraryItem,
   type Member,
   type Poll,
 } from "../store/mockData";
@@ -57,6 +58,9 @@ type TripDetailProps = {
   // survive switching between the Summary/Itinerary/Budget tabs.
   mapIntroPlayed: boolean;
   onMapIntroPlayed: () => void;
+  itinerary: ItineraryItem[];
+  dayOptions: string[];
+  onEditItinerary: () => void;
 };
 
 const TABS: Tab[] = ["summary", "itinerary", "budget"];
@@ -197,6 +201,9 @@ export default function TripDetail({
   onHeroIntroPlayed,
   mapIntroPlayed,
   onMapIntroPlayed,
+  itinerary,
+  dayOptions,
+  onEditItinerary,
 }: TripDetailProps) {
   const [tab, setTab] = useState<Tab>(initialTab ?? "summary");
   const [tabReady, setTabReady] = useState(false);
@@ -265,7 +272,19 @@ export default function TripDetail({
 
   const currentUserId = tripMembers.find((m) => m.isYou)?.id ?? null;
   const isBudgetSubStep = tab === "budget" && budgetStep !== "list";
-  const reversedItinerary = [...itinerary].reverse();
+  // Ordered explicitly rather than by reversing the array: a plan added from
+  // the editor lands at the end of the list, and reversing would float it to
+  // the top of the page under a second, duplicate heading for its day.
+  // Latest day first, and latest plan first within each day.
+  const dayOrder = new Map(dayOptions.map((iso, i) => [formatDayLabel(iso), i]));
+  const reversedItinerary = [...itinerary].sort((a, b) => {
+    const dayDiff = (dayOrder.get(b.day) ?? 0) - (dayOrder.get(a.day) ?? 0);
+    if (dayDiff !== 0) return dayDiff;
+    // "Free day" has no clock position, so it sits at the foot of its day.
+    if (a.time === "Free day") return 1;
+    if (b.time === "Free day") return -1;
+    return b.time.localeCompare(a.time);
+  });
 
   const openBalances = computeOpenBalances(expenseList, memberIds, settlements);
   const allSettled = openBalances.length === 0;
@@ -561,6 +580,16 @@ export default function TripDetail({
               <TripMap introPlayed={mapIntroPlayed} onIntroPlayed={onMapIntroPlayed} />
 
               <Card>
+                <div className="flex items-center justify-between mb-1">
+                  <h2 className="font-body font-bold text-ink text-[20px]">Plans</h2>
+                  <button
+                    onClick={onEditItinerary}
+                    className="flex items-center gap-1.5 bg-teal/10 rounded-full px-3 py-1.5"
+                  >
+                    <span className="text-[12px]">✏️</span>
+                    <span className="font-body font-bold text-teal text-[12px]">Edit</span>
+                  </button>
+                </div>
                 <div className="flex flex-col">
                   {reversedItinerary.map((item, i) => (
                     <div key={item.id}>

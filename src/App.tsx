@@ -13,14 +13,17 @@ import ParticipantsDetail from "./screens/ParticipantsDetail";
 import CreatePoll from "./screens/CreatePoll";
 import PollDetail from "./screens/PollDetail";
 import PollResult from "./screens/PollResult";
+import EditItinerary from "./screens/EditItinerary";
 import {
   expenseHistory,
   trips,
   members,
   tripDayRange,
   activeParticipantIds,
+  itinerary as seedItinerary,
   type ExpenseCategory,
   type ExpenseHistoryItem,
+  type ItineraryItem,
   type Member,
   type Poll,
   type PollOption,
@@ -42,7 +45,8 @@ type Screen =
   | "participants"
   | "createPoll"
   | "pollDetail"
-  | "pollResult";
+  | "pollResult"
+  | "editItinerary";
 
 type Tab = "summary" | "itinerary" | "budget";
 
@@ -76,6 +80,7 @@ function AppInner() {
   // Same again for the map's cloud reveal: TripMap unmounts whenever the user
   // leaves the Itinerary tab, so the flag has to live above it.
   const [mapIntroPlayed, setMapIntroPlayed] = useState(false);
+  const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>(seedItinerary);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
   // Mia has already paid Nic back, which is why that pair shows as settled.
@@ -180,6 +185,18 @@ function AppInner() {
     setSettlements((prev) => [...prev, { id: `settle-${Date.now()}`, fromId, toId, amount }]);
   }
 
+  function handleAddItineraryItem(item: Omit<ItineraryItem, "id">) {
+    setItineraryItems((prev) => [...prev, { ...item, id: `plan-${Date.now()}` }]);
+  }
+
+  function handleUpdateItineraryItem(id: string, patch: Partial<ItineraryItem>) {
+    setItineraryItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
+  }
+
+  function handleRemoveItineraryItem(id: string) {
+    setItineraryItems((prev) => prev.filter((it) => it.id !== id));
+  }
+
   function handleNudgePoll() {
     setPoll((prev) => {
       if (!prev || prev.closed) return prev;
@@ -243,6 +260,21 @@ function AppInner() {
           onHeroIntroPlayed={() => setHeroIntroPlayed(true)}
           mapIntroPlayed={mapIntroPlayed}
           onMapIntroPlayed={() => setMapIntroPlayed(true)}
+          itinerary={itineraryItems}
+          dayOptions={dayOptions}
+          onEditItinerary={() => setScreen("editItinerary")}
+        />
+      )}
+
+      {screen === "editItinerary" && (
+        <EditItinerary
+          key="editItinerary"
+          itinerary={itineraryItems}
+          dayOptions={dayOptions}
+          onBack={() => goToTrip("itinerary")}
+          onAdd={handleAddItineraryItem}
+          onUpdate={handleUpdateItineraryItem}
+          onRemove={handleRemoveItineraryItem}
         />
       )}
 
