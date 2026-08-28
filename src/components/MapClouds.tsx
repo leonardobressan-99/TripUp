@@ -65,9 +65,14 @@ function CloudBank({
           />
         </filter>
 
+        {/* Must reach zero by the edge of the viewBox. At a larger radius the
+            bank is still near-opaque where the SVG viewport clips it, which
+            leaves a hard vertical seam — invisible while the bank is centred,
+            but it slides straight into view once the bank drifts. */}
         <radialGradient id={`cloud-fade-${id}`} cx="50%" cy="50%" r={maskRadius}>
           <stop offset="0%" stopColor="#fff" stopOpacity="1" />
-          <stop offset="62%" stopColor="#fff" stopOpacity="0.95" />
+          <stop offset="55%" stopColor="#fff" stopOpacity="0.94" />
+          <stop offset="82%" stopColor="#fff" stopOpacity="0.55" />
           <stop offset="100%" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
 
@@ -100,7 +105,10 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => setParted(true));
     });
-    const done = setTimeout(onDone, 2600);
+    // Unmount once the fade has finished rather than waiting out the drift:
+    // the banks are fully transparent by then, so keeping them mounted only
+    // costs compositing.
+    const done = setTimeout(onDone, 2050);
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
@@ -110,6 +118,10 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
   }, []);
 
   const ease = [0.33, 0, 0.2, 1] as const;
+  // Opacity finishes well before the drift does: the banks are already
+  // invisible by the time their far edges travel anywhere near the map, so no
+  // boundary can show up regardless of how far they slide.
+  const fade = { duration: 1.7, ease: "easeInOut" as const };
 
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 20 }}>
@@ -131,7 +143,7 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
         style={{ inset: "-18% -22%", willChange: "transform, opacity" }}
         initial={{ x: "0%", scale: 1, opacity: 0.85 }}
         animate={parted ? { x: "34%", scale: 1.16, opacity: 0 } : {}}
-        transition={{ duration: 2.4, ease }}
+        transition={{ duration: 2.4, ease, opacity: fade }}
       >
         <CloudBank
           id="back"
@@ -140,7 +152,7 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
           octaves={5}
           alphaSlope={1.3}
           alphaBias={1.15}
-          maskRadius="74%"
+          maskRadius="50%"
         />
       </motion.div>
 
@@ -150,7 +162,7 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
         style={{ inset: "-20% -25%", willChange: "transform, opacity" }}
         initial={{ x: "0%", scale: 1, opacity: 1 }}
         animate={parted ? { x: "-42%", scale: 1.22, opacity: 0 } : {}}
-        transition={{ duration: 2.3, ease }}
+        transition={{ duration: 2.3, ease, opacity: fade }}
       >
         <CloudBank
           id="front"
@@ -159,7 +171,7 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
           octaves={6}
           alphaSlope={1.7}
           alphaBias={1.32}
-          maskRadius="78%"
+          maskRadius="50%"
         />
       </motion.div>
 
@@ -169,7 +181,7 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
         style={{ inset: "-10% -15%", willChange: "transform, opacity" }}
         initial={{ x: "0%", scale: 1, opacity: 0.6 }}
         animate={parted ? { x: "-16%", scale: 1.1, opacity: 0 } : {}}
-        transition={{ duration: 2.6, ease, delay: 0.12 }}
+        transition={{ duration: 2.6, ease, delay: 0.12, opacity: { ...fade, delay: 0.12 } }}
       >
         <CloudBank
           id="wisps"
@@ -178,7 +190,7 @@ export default function MapClouds({ onDone }: { onDone: () => void }) {
           octaves={4}
           alphaSlope={1.1}
           alphaBias={0.95}
-          maskRadius="82%"
+          maskRadius="50%"
         />
       </motion.div>
     </div>
