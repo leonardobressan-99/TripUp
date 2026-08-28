@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { itineraryMapPins } from "../store/mockData";
 import lisbonMap from "../assets/images/LisbonMap.jpg";
+import MapClouds from "./MapClouds";
 
-export default function TripMap() {
+type TripMapProps = {
+  // Whether the cloud reveal has already run this session. Lifted to App.tsx
+  // rather than kept here: this component unmounts every time the user leaves
+  // the Itinerary tab, so local state would replay the intro on every visit.
+  introPlayed: boolean;
+  onIntroPlayed: () => void;
+};
+
+export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
@@ -13,6 +22,8 @@ export default function TripMap() {
     >
       <img src={lisbonMap} alt="Trip map" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0" style={{ background: "rgba(28,37,65,0.08)" }} />
+
+      {!introPlayed && <MapClouds onDone={onIntroPlayed} />}
 
       {itineraryMapPins.map((pin) => {
         const isActive = activeId === pin.id;

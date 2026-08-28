@@ -53,6 +53,10 @@ type TripDetailProps = {
   // the one real first arrival from Home.
   heroIntroPlayed: boolean;
   onHeroIntroPlayed: () => void;
+  // Same reasoning for the map's cloud reveal, which additionally has to
+  // survive switching between the Summary/Itinerary/Budget tabs.
+  mapIntroPlayed: boolean;
+  onMapIntroPlayed: () => void;
 };
 
 const TABS: Tab[] = ["summary", "itinerary", "budget"];
@@ -191,6 +195,8 @@ export default function TripDetail({
   onSettleBalance,
   heroIntroPlayed,
   onHeroIntroPlayed,
+  mapIntroPlayed,
+  onMapIntroPlayed,
 }: TripDetailProps) {
   const [tab, setTab] = useState<Tab>(initialTab ?? "summary");
   const [tabReady, setTabReady] = useState(false);
@@ -552,7 +558,7 @@ export default function TripDetail({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="absolute inset-0 overflow-y-auto px-5 pt-5 pb-28 flex flex-col gap-4"
             >
-              <TripMap />
+              <TripMap introPlayed={mapIntroPlayed} onIntroPlayed={onMapIntroPlayed} />
 
               <Card>
                 <div className="flex flex-col">

@@ -73,6 +73,9 @@ function AppInner() {
   // navigation (e.g. visiting Participants and coming back), so local
   // state would replay the fade every time instead of just once.
   const [heroIntroPlayed, setHeroIntroPlayed] = useState(false);
+  // Same again for the map's cloud reveal: TripMap unmounts whenever the user
+  // leaves the Itinerary tab, so the flag has to live above it.
+  const [mapIntroPlayed, setMapIntroPlayed] = useState(false);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
   // Mia has already paid Nic back, which is why that pair shows as settled.
@@ -238,6 +241,8 @@ function AppInner() {
           onSettleBalance={handleSettleBalance}
           heroIntroPlayed={heroIntroPlayed}
           onHeroIntroPlayed={() => setHeroIntroPlayed(true)}
+          mapIntroPlayed={mapIntroPlayed}
+          onMapIntroPlayed={() => setMapIntroPlayed(true)}
         />
       )}
 
