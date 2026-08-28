@@ -9,6 +9,7 @@ import ActionSheet from "../components/ActionSheet";
 import Avatar from "../components/Avatar";
 import AvatarStack from "../components/AvatarStack";
 import ConfirmDialog from "../components/ConfirmDialog";
+import InfoDialog from "../components/InfoDialog";
 import { PollIcon, ExpenseIcon, MemberIcon } from "../components/ActionIcons";
 import checkBadge from "../assets/icons/check-badge.svg";
 import creditCardIcon from "../assets/images/CreditCard.png";
@@ -198,6 +199,7 @@ export default function TripDetail({
   const [activeTxn, setActiveTxn] = useState<BalanceTxn | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [showMergeInfo, setShowMergeInfo] = useState(false);
   // Home's hero uses a vivid red-tinted gradient; this screen's smaller
   // card uses a plain dark one for text legibility. Left as a bare swap,
   // the two colors change instantly the moment the shared hero box lands
@@ -659,13 +661,23 @@ export default function TripDetail({
                         Across {expenseList.length} expenses
                       </p>
                       {mergedCount > 0 && (
-                        <div className="inline-flex items-center gap-1.5 bg-teal/10 rounded-full px-3 py-1.5 mb-4">
+                        <button
+                          onClick={() => setShowMergeInfo(true)}
+                          aria-label="How merging debts works"
+                          className="inline-flex items-center gap-1.5 bg-teal/10 rounded-full pl-3 pr-2.5 py-1.5 mb-4"
+                        >
                           <span className="text-[12px]">✨</span>
                           <span className="font-body font-bold text-teal text-[12px]">
                             {rawBalanceCount} debts merged into {openBalances.length}{" "}
                             {openBalances.length === 1 ? "transfer" : "transfers"}
                           </span>
-                        </div>
+                          <span
+                            className="w-[15px] h-[15px] rounded-full flex items-center justify-center shrink-0"
+                            style={{ border: "1.3px solid #0EA5A0" }}
+                          >
+                            <span className="font-body font-bold text-teal text-[10px] leading-none">i</span>
+                          </span>
+                        </button>
                       )}
 
                       <div
@@ -1050,6 +1062,31 @@ export default function TripDetail({
         }}
         onCancel={() => setShowEndConfirm(false)}
       />
+
+      {/* what "N debts merged into M transfers" means */}
+      <InfoDialog
+        open={showMergeInfo}
+        title="Fewer payments, same maths"
+        onDismiss={() => setShowMergeInfo(false)}
+      >
+        <p className="font-body text-grey-ink text-[13px] leading-snug">
+          Every expense creates a debt between whoever paid and whoever shared it — {rawBalanceCount} of
+          them on this trip so far.
+        </p>
+        <p className="font-body text-grey-ink text-[13px] leading-snug">
+          Rather than everyone paying each other back one by one, TripUp works out what each person is up
+          or down overall and finds the shortest way to square up:{" "}
+          <span className="font-bold text-ink">
+            {openBalances.length} {openBalances.length === 1 ? "payment" : "payments"} instead of{" "}
+            {rawBalanceCount}
+          </span>
+          .
+        </p>
+        <p className="font-body text-grey-ink text-[13px] leading-snug">
+          Nobody ends up paying more or less — the money just takes a more direct route. If Mia owes you
+          and you owe Jo, Mia pays Jo and you drop out of the middle.
+        </p>
+      </InfoDialog>
     </motion.div>
   );
 }
