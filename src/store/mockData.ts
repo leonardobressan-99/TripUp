@@ -265,10 +265,10 @@ export const expenseHistory: ExpenseHistoryItem[] = [
     id: "e2",
     name: "Chiado apartment deposit",
     date: "2026-08-19",
-    // Ari fronted the deposit for the whole group, which is what leaves her
-    // owed money by everyone else and gives the balances screen something to
-    // chase up rather than pay off.
-    paidById: "ari",
+    // Jo fronted the deposit, which is what leaves Ari as the trip's biggest
+    // net debtor — the balances screen gives her a Pay button instead of a
+    // Nudge.
+    paidById: "jo",
     amount: 980.0,
     items: [{ name: "Apartment deposit", amount: 980, category: "accommodation", splitIds: ORIGINAL_MEMBERS }],
   },
