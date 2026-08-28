@@ -75,11 +75,13 @@ function AppInner() {
   const [heroIntroPlayed, setHeroIntroPlayed] = useState(false);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
+  // Jo has already squared up with Nic, so the only transfers still outstanding
+  // are the ones pointing at Ari — she is owed money rather than owing it, and
+  // the balances screen shows her a Nudge on each instead of a Pay button.
+  // The amount matches the simplified plan for the seeded expenses exactly; a
+  // different figure would leave a stray few cents open between Jo and Nic.
   const [settlements, setSettlements] = useState<SettlementRecord[]>([
-    { id: "seed-settle-1", fromId: "ari", toId: "nic", amount: 109.33 },
-    { id: "seed-settle-2", fromId: "mia", toId: "jo", amount: 251.0 },
-    { id: "seed-settle-3", fromId: "nic", toId: "jo", amount: 165.68 },
-    { id: "seed-settle-4", fromId: "mia", toId: "nic", amount: 85.33 },
+    { id: "seed-settle-1", fromId: "jo", toId: "nic", amount: 28.98 },
   ]);
 
   const trip = trips[0];
