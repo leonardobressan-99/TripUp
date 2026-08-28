@@ -24,7 +24,7 @@ import {
   type Member,
   type Poll,
 } from "../store/mockData";
-import { computePairwiseBalances, applySettlements, type BalanceTxn, type SettlementRecord } from "../store/balances";
+import { computeOpenBalances, type BalanceTxn, type SettlementRecord } from "../store/balances";
 import chevronIcon from "../assets/icons/Right_Arrow.svg";
 import backArrowIcon from "../assets/icons/Back_Arrow.svg";
 
@@ -259,8 +259,7 @@ export default function TripDetail({
   const isBudgetSubStep = tab === "budget" && budgetStep !== "list";
   const reversedItinerary = [...itinerary].reverse();
 
-  const rawBalances = computePairwiseBalances(expenseList, memberIds);
-  const openBalances = applySettlements(rawBalances, settlements);
+  const openBalances = computeOpenBalances(expenseList, memberIds, settlements);
   const allSettled = openBalances.length === 0;
   const recentSettlements = [...settlements].reverse().slice(0, 5);
 

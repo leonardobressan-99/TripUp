@@ -13,18 +13,44 @@ export type BalanceTxn = {
   amount: number;
 };
 
-const EPS = 0.005;
+/**
+ * Splits an amount between n people in whole cents, handing the leftover cents
+ * to the first few. €35 three ways becomes 1167/1167/1166 rather than three
+ * copies of 11.6666…, so the shares add back up to exactly what was spent.
+ */
+function splitCents(totalCents: number, people: number): number[] {
+  const sign = totalCents < 0 ? -1 : 1;
+  const magnitude = Math.abs(totalCents);
+  const base = Math.floor(magnitude / people);
+  const remainder = magnitude % people;
+  return Array.from({ length: people }, (_, i) => sign * (base + (i < remainder ? 1 : 0)));
+}
 
-/** Raw amount each person owes each other person, before netting each pair down to one direction. */
-function computeRawOwed(
+/**
+ * Net position of every member, in whole cents: positive means the group owes
+ * them, negative means they owe the group. Settlements move money between two
+ * people, so they shift both net positions rather than cancelling one specific
+ * debt — that is what lets the simplifier re-plan the remaining transfers after
+ * each payment.
+ *
+ * Everything is integer cents on purpose. Doing this in euros accumulates
+ * floating-point error (−175.385 + 175.38 does not land on −0.005), which drags
+ * a value across a rounding boundary and invents a phantom €0.01 debt that
+ * "End trip" can never clear.
+ */
+function computeNetCents(
   expenseList: ExpenseHistoryItem[],
-  memberIds: string[]
-): Map<string, Map<string, number>> {
-  const owed = new Map<string, Map<string, number>>();
-  const add = (debtorId: string, creditorId: string, amount: number) => {
-    if (!owed.has(debtorId)) owed.set(debtorId, new Map());
-    const m = owed.get(debtorId)!;
-    m.set(creditorId, (m.get(creditorId) ?? 0) + amount);
+  memberIds: string[],
+  settlements: SettlementRecord[]
+): Map<string, number> {
+  const net = new Map<string, number>(memberIds.map((id) => [id, 0]));
+
+  const transfer = (debtorId: string, creditorId: string, cents: number) => {
+    // Skip anyone no longer on the trip: their debts can't be settled here, and
+    // crediting only one side would break the sum-to-zero invariant.
+    if (!net.has(debtorId) || !net.has(creditorId)) return;
+    net.set(debtorId, net.get(debtorId)! - cents);
+    net.set(creditorId, net.get(creditorId)! + cents);
   };
 
   for (const expense of expenseList) {
@@ -36,71 +62,72 @@ function computeRawOwed(
     for (const item of items) {
       const participants = item.splitIds.filter((id) => memberIds.includes(id));
       if (participants.length === 0) continue;
-      const share = item.amount / participants.length;
-      for (const p of participants) {
-        if (p === expense.paidById) continue;
-        add(p, expense.paidById, share);
-      }
+      const shares = splitCents(Math.round(item.amount * 100), participants.length);
+      participants.forEach((participant, i) => {
+        if (participant === expense.paidById) return;
+        transfer(participant, expense.paidById, shares[i]);
+      });
     }
   }
 
-  return owed;
+  // A settlement is the debtor handing over cash, which pays down their side.
+  for (const s of settlements) transfer(s.toId, s.fromId, Math.round(s.amount * 100));
+
+  return net;
 }
 
 /**
- * Nets every pair of members independently (not routed through a single global
- * creditor), so e.g. Ari can owe Jo for one expense while separately being
- * owed by Mia for another — both are visible at once.
+ * Turns net positions (in cents) into the fewest transfers that clear them, by
+ * repeatedly pairing the largest debtor with the largest creditor. Each transfer
+ * zeroes out at least one person, so a group of n settles in at most n-1
+ * payments instead of one payment per pair who happened to share an expense.
+ *
+ * This deliberately re-routes money: if Mia owes Ari and Ari owes Jo, Mia is
+ * asked to pay Jo directly and Ari drops out of the chain entirely.
  */
-export function computePairwiseBalances(
-  expenseList: ExpenseHistoryItem[],
-  memberIds: string[]
-): BalanceTxn[] {
-  const owed = computeRawOwed(expenseList, memberIds);
-  const txns: BalanceTxn[] = [];
+export function simplifyDebts(netCents: Map<string, number>): BalanceTxn[] {
+  const debtors: { id: string; cents: number }[] = [];
+  const creditors: { id: string; cents: number }[] = [];
 
-  for (let i = 0; i < memberIds.length; i++) {
-    for (let j = i + 1; j < memberIds.length; j++) {
-      const a = memberIds[i];
-      const b = memberIds[j];
-      const aOwesB = owed.get(a)?.get(b) ?? 0;
-      const bOwesA = owed.get(b)?.get(a) ?? 0;
-      const net = aOwesB - bOwesA;
-      if (net > EPS) txns.push({ fromId: a, toId: b, amount: net });
-      else if (net < -EPS) txns.push({ fromId: b, toId: a, amount: -net });
+  for (const [id, amount] of netCents) {
+    if (amount < 0) debtors.push({ id, cents: -amount });
+    else if (amount > 0) creditors.push({ id, cents: amount });
+  }
+
+  // Largest first so the biggest obligations get cleared in one hop; the id
+  // tie-break keeps the output stable across renders for equal amounts.
+  const bySize = (a: { id: string; cents: number }, b: { id: string; cents: number }) =>
+    b.cents - a.cents || a.id.localeCompare(b.id);
+  debtors.sort(bySize);
+  creditors.sort(bySize);
+
+  const txns: BalanceTxn[] = [];
+  let d = 0;
+  let c = 0;
+
+  while (d < debtors.length && c < creditors.length) {
+    const paid = Math.min(debtors[d].cents, creditors[c].cents);
+    if (paid > 0) {
+      txns.push({ fromId: debtors[d].id, toId: creditors[c].id, amount: paid / 100 });
     }
+    debtors[d].cents -= paid;
+    creditors[c].cents -= paid;
+    if (debtors[d].cents === 0) d++;
+    if (creditors[c].cents === 0) c++;
   }
 
   return txns;
 }
 
-/** Applies recorded settlements to reduce (or reverse) the matching pairwise balance. */
-export function applySettlements(txns: BalanceTxn[], settlements: SettlementRecord[]): BalanceTxn[] {
-  const pairKey = (a: string, b: string) => [a, b].sort().join("|");
-  const net = new Map<string, number>(); // key: sorted pair, value: signed amount (first owes second)
-  const members = new Map<string, [string, string]>();
-
-  for (const t of txns) {
-    const key = pairKey(t.fromId, t.toId);
-    const [first] = key.split("|");
-    const sign = first === t.fromId ? 1 : -1;
-    net.set(key, (net.get(key) ?? 0) + sign * t.amount);
-    members.set(key, key.split("|") as [string, string]);
-  }
-
-  for (const s of settlements) {
-    const key = pairKey(s.fromId, s.toId);
-    const [first] = key.split("|");
-    const sign = first === s.fromId ? 1 : -1;
-    net.set(key, (net.get(key) ?? 0) - sign * s.amount);
-    if (!members.has(key)) members.set(key, key.split("|") as [string, string]);
-  }
-
-  const result: BalanceTxn[] = [];
-  for (const [key, amount] of net) {
-    const [first, second] = members.get(key)!;
-    if (amount > EPS) result.push({ fromId: first, toId: second, amount: Math.round(amount * 100) / 100 });
-    else if (amount < -EPS) result.push({ fromId: second, toId: first, amount: Math.round(-amount * 100) / 100 });
-  }
-  return result;
+/**
+ * The open transfers still owed on this trip, already simplified. Recomputed
+ * from scratch after every expense edit and every settlement, so the plan always
+ * reflects the current state rather than accumulating stale pairwise debts.
+ */
+export function computeOpenBalances(
+  expenseList: ExpenseHistoryItem[],
+  memberIds: string[],
+  settlements: SettlementRecord[]
+): BalanceTxn[] {
+  return simplifyDebts(computeNetCents(expenseList, memberIds, settlements));
 }

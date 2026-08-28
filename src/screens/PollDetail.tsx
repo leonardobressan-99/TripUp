@@ -123,7 +123,7 @@ export default function PollDetail({
             >
               <span className="text-[15px]">🔔</span>
               <span className="font-body font-bold text-teal text-[14px]">
-                Nudge {pendingCount} {pendingCount === 1 ? "person" : "people"} who haven't voted
+                Nudge {pendingCount} {pendingCount === 1 ? "person who hasn't" : "people who haven't"} voted
               </span>
             </button>
             <AnimatePresence>
