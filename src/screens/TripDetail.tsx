@@ -24,7 +24,7 @@ import {
   type Member,
   type Poll,
 } from "../store/mockData";
-import { computeOpenBalances, type BalanceTxn, type SettlementRecord } from "../store/balances";
+import { computeOpenBalances, computeRawBalances, type BalanceTxn, type SettlementRecord } from "../store/balances";
 import chevronIcon from "../assets/icons/Right_Arrow.svg";
 import backArrowIcon from "../assets/icons/Back_Arrow.svg";
 
@@ -262,6 +262,13 @@ export default function TripDetail({
   const openBalances = computeOpenBalances(expenseList, memberIds, settlements);
   const allSettled = openBalances.length === 0;
   const recentSettlements = [...settlements].reverse().slice(0, 5);
+
+  // Both lists are recomputed on every render, so logging an expense or
+  // recording a payment immediately re-plans the transfers below rather than
+  // appending to a stale list. The raw count is only used to show how much
+  // consolidating actually saved.
+  const rawBalanceCount = computeRawBalances(expenseList, memberIds, settlements).length;
+  const mergedCount = rawBalanceCount - openBalances.length;
 
   const openKeys = new Set(openBalances.map((b) => `${b.fromId}-${b.toId}`));
   const latestSettlementByPair = new Map<string, SettlementRecord>();
@@ -648,9 +655,18 @@ export default function TripDetail({
                           {allSettled ? "Settled" : `${openBalances.length} open`}
                         </span>
                       </div>
-                      <p className="font-body text-grey-ink text-[13px] mb-4">
+                      <p className={`font-body text-grey-ink text-[13px] ${mergedCount > 0 ? "mb-2" : "mb-4"}`}>
                         Across {expenseList.length} expenses
                       </p>
+                      {mergedCount > 0 && (
+                        <div className="inline-flex items-center gap-1.5 bg-teal/10 rounded-full px-3 py-1.5 mb-4">
+                          <span className="text-[12px]">✨</span>
+                          <span className="font-body font-bold text-teal text-[12px]">
+                            {rawBalanceCount} debts merged into {openBalances.length}{" "}
+                            {openBalances.length === 1 ? "transfer" : "transfers"}
+                          </span>
+                        </div>
+                      )}
 
                       <div
                         className={`rounded-[14px] p-3.5 ${otherRows.length > 0 ? "mb-4" : ""}`}

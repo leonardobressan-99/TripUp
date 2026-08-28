@@ -75,16 +75,14 @@ function AppInner() {
   const [heroIntroPlayed, setHeroIntroPlayed] = useState(false);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
-  // Balances are per-pair, not globally netted, so Ari can owe one person
-  // while being owed by another at the same time. This seeds every state the
-  // balances screen supports at once: Ari owing Jo (Pay), Mia owing Ari
-  // (Nudge), and three pairs between other members already settled (Paid).
-  // Each amount matches the raw pairwise balance for the seeded expenses
-  // exactly — a different figure would leave a stray cent open on that pair.
+  // Mia has already paid Nic back, which is why that pair shows as settled.
+  // Everything still outstanding gets consolidated by the simplifier, so the
+  // seeded expenses land on the balances screen as four raw debts merged into
+  // three transfers, with Ari owing Jo (Pay) and the rest between other
+  // members. The amount matches that pair's raw balance exactly — a different
+  // figure would leave a stray cent open between Mia and Nic.
   const [settlements, setSettlements] = useState<SettlementRecord[]>([
-    { id: "seed-settle-1", fromId: "mia", toId: "jo", amount: 251.0 },
-    { id: "seed-settle-2", fromId: "nic", toId: "jo", amount: 129.23 },
-    { id: "seed-settle-3", fromId: "mia", toId: "nic", amount: 121.77 },
+    { id: "seed-settle-1", fromId: "mia", toId: "nic", amount: 121.77 },
   ]);
 
   const trip = trips[0];
