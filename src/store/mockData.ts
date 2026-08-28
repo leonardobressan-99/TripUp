@@ -278,7 +278,12 @@ export const expenseHistory: ExpenseHistoryItem[] = [
     date: "2026-08-19",
     amount: 437.3,
     paidById: "nic",
-    items: [{ name: "Taxi to Chiado apartment", amount: 437.3, category: "transport", splitIds: ORIGINAL_MEMBERS }],
+    // Ari arrived separately and skipped this ride, so she's excluded — that
+    // keeps her balance with Nic at exactly zero instead of adding a third
+    // open row for her on the demo balances screen.
+    items: [
+      { name: "Taxi to Chiado apartment", amount: 437.3, category: "transport", splitIds: ["jo", "mia", "nic"] },
+    ],
   },
 ];
 
