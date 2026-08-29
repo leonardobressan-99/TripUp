@@ -75,7 +75,7 @@ export default function CreatePoll({ onBack, onCreate }: CreatePollProps) {
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
-                  className={`flex items-center gap-1 rounded-[10px] px-3 py-1.5 font-body font-bold text-[12px] transition-colors ${
+                  className={`flex items-center gap-1 rounded-[10px] px-3 py-1.5 font-body font-bold text-[14px] transition-colors ${
                     selected ? "bg-teal text-white" : "bg-[#F0EBDD] text-ink"
                   }`}
                   style={

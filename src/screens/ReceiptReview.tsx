@@ -142,7 +142,7 @@ export default function ReceiptReview({
       >
         <div className="flex items-center gap-4 mb-3 px-1 overflow-x-auto">
           {categoryTotals.map(({ category, total }) => (
-            <p key={category} className="font-body text-grey-ink text-[13px] whitespace-nowrap shrink-0">
+            <p key={category} className="font-body text-grey-ink text-[14px] whitespace-nowrap shrink-0">
               {categoryMeta[category].icon} {categoryMeta[category].label}{" "}
               <span className="font-bold text-ink">€{total.toFixed(2)}</span>
             </p>

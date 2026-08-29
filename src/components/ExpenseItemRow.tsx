@@ -42,7 +42,7 @@ export default function ExpenseItemRow({
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-body text-ink text-[14px] truncate">{item.name || "Untitled item"}</p>
-          <p className="font-body text-grey-ink text-[11px] mt-0.5">
+          <p className="font-body text-grey-ink text-[13px] mt-0.5">
             {categoryMeta[item.category].label}
             {excludedCount > 0 && (
               <span className="font-bold text-coral"> · {excludedCount} excluded</span>
@@ -115,7 +115,7 @@ export default function ExpenseItemRow({
                       <button
                         key={cat}
                         onClick={() => onUpdateCategory(cat)}
-                        className={`flex items-center gap-1 rounded-[10px] px-3 py-1.5 font-body font-bold text-[12px] transition-colors ${
+                        className={`flex items-center gap-1 rounded-[10px] px-3 py-1.5 font-body font-bold text-[14px] transition-colors ${
                           selected ? "bg-teal text-white" : "bg-[#F0EBDD] text-ink"
                         }`}
                         style={

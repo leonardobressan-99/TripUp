@@ -182,10 +182,10 @@ export default function ExpenseDetail({
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
                   <div className="flex items-center justify-between px-1 mb-2">
-                    <p className="font-body font-bold text-ink text-[14px]">
+                    <p className="font-body font-bold text-ink text-[16px]">
                       {categoryMeta[group.category].icon} {categoryMeta[group.category].label}
                     </p>
-                    <p className="font-body font-bold text-ink text-[14px]">€{group.total.toFixed(2)}</p>
+                    <p className="font-body font-bold text-ink text-[16px]">€{group.total.toFixed(2)}</p>
                   </div>
                   <div className="flex flex-col gap-3">
                     <AnimatePresence initial={false}>
