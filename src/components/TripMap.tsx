@@ -50,7 +50,7 @@ export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
               >
                 <span
                   className="font-body font-bold text-white text-center"
-                  style={{ fontSize: 9, lineHeight: 1 }}
+                  style={{ fontSize: 11, lineHeight: 1.1 }}
                 >
                   {pin.label}
                 </span>
@@ -76,13 +76,13 @@ export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
       >
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded-full bg-teal" />
-          <span className="font-body font-bold text-ink" style={{ fontSize: 9 }}>
+          <span className="font-body font-bold text-ink" style={{ fontSize: 11 }}>
             Visited
           </span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded-full bg-coral" />
-          <span className="font-body font-bold text-ink" style={{ fontSize: 9 }}>
+          <span className="font-body font-bold text-ink" style={{ fontSize: 11 }}>
             Upcoming
           </span>
         </div>

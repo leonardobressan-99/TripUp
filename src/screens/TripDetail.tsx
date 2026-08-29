@@ -537,7 +537,7 @@ export default function TripDetail({
                             {m.name}
                             {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
                             {m.isOrganizer && (
-                              <span className="font-body font-bold text-[10px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
+                              <span className="font-body font-bold text-[11px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
                                 Organizer
                               </span>
                             )}
@@ -707,10 +707,10 @@ export default function TripDetail({
                             {openBalances.length === 1 ? "transfer" : "transfers"}
                           </span>
                           <span
-                            className="w-[15px] h-[15px] rounded-full flex items-center justify-center shrink-0"
+                            className="w-[16px] h-[16px] rounded-full flex items-center justify-center shrink-0"
                             style={{ border: "1.3px solid #0EA5A0" }}
                           >
-                            <span className="font-body font-bold text-teal text-[10px] leading-none">i</span>
+                            <span className="font-body font-bold text-teal text-[11px] leading-none">i</span>
                           </span>
                         </button>
                       )}
@@ -724,7 +724,7 @@ export default function TripDetail({
                             Your payments
                           </p>
                           <span
-                            className={`font-body font-bold text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                            className={`font-body font-bold text-[11px] uppercase tracking-wide px-2 py-0.5 rounded-full ${
                               yourOpenCount === 0 ? "bg-teal/15 text-teal" : "bg-[#F2A93B]/20 text-[#B4761F]"
                             }`}
                           >

@@ -197,7 +197,7 @@ export default function AddExpense({
                         className="flex flex-col items-center gap-1"
                       >
                         <Avatar member={m} size={44} ring={selected ? "#0EA5A0" : "transparent"} />
-                        <span className="font-body font-bold text-ink text-[11px]">{m.name}</span>
+                        <span className="font-body font-bold text-ink text-[12px]">{m.name}</span>
                       </button>
                     );
                   })}

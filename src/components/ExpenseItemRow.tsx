@@ -52,7 +52,7 @@ export default function ExpenseItemRow({
         <p className="font-body font-bold text-ink text-[15px] shrink-0">€{item.amount.toFixed(2)}</p>
         {item.confirmed === false && (
           <div className="flex items-center gap-1 bg-[#F2A93B]/15 rounded-full px-2 py-1 shrink-0">
-            <span className="text-[10px]">⚠️</span>
+            <span className="text-[12px]">⚠️</span>
           </div>
         )}
         <motion.svg
@@ -156,7 +156,7 @@ export default function ExpenseItemRow({
                         <p className={`font-body font-bold text-[13px] flex-1 ${included ? "text-ink" : "text-grey-ink"}`}>
                           {m.name}
                           {!included && (
-                            <span className="font-body font-bold text-coral text-[10px] uppercase ml-2">Excluded</span>
+                            <span className="font-body font-bold text-coral text-[11px] uppercase ml-2">Excluded</span>
                           )}
                         </p>
                         <Switch on={included} onToggle={() => onToggleMember(mid)} />

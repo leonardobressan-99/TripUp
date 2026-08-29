@@ -116,7 +116,7 @@ export default function EditItinerary({
               >
                 <div className="flex items-center justify-between mb-3">
                   <p className="font-body font-bold text-teal text-[12px] uppercase tracking-wide">{label}</p>
-                  <span className="font-body text-grey-ink text-[11px]">
+                  <span className="font-body text-grey-ink text-[12px]">
                     {plans.length === 0
                       ? "Day " + (dayIndex + 1)
                       : `${plans.length} ${plans.length === 1 ? "plan" : "plans"}`}
@@ -139,7 +139,7 @@ export default function EditItinerary({
                           className="flex items-center gap-3 flex-1 min-w-0 text-left"
                         >
                           <span
-                            className={`font-body font-bold text-[11px] rounded-full px-2 py-1 shrink-0 w-[58px] text-center ${
+                            className={`font-body font-bold text-[12px] rounded-full px-2 py-1 shrink-0 w-[64px] text-center ${
                               item.time === ALL_DAY ? "bg-teal/10 text-teal" : "bg-[#F0EBDD] text-ink"
                             }`}
                           >

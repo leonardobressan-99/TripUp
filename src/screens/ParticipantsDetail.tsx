@@ -136,22 +136,22 @@ export default function ParticipantsDetail({
                     {m.name}
                     {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
                     {m.isOrganizer ? (
-                      <span className="font-body font-bold text-[10px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
+                      <span className="font-body font-bold text-[11px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
                         Organizer
                       </span>
                     ) : (
-                      <span className="font-body font-bold text-[10px] text-grey-ink uppercase tracking-wide bg-[#EDE7DA] px-2 py-0.5 rounded-full">
+                      <span className="font-body font-bold text-[11px] text-grey-ink uppercase tracking-wide bg-[#EDE7DA] px-2 py-0.5 rounded-full">
                         Member
                       </span>
                     )}
                   </p>
                   <p className="font-body text-grey-ink text-[13px] truncate mt-0.5">{m.email}</p>
                   <label className="flex items-center gap-1 mt-1.5">
-                    <span className="font-body text-grey-ink text-[11px]">Splitting since</span>
+                    <span className="font-body text-grey-ink text-[12px]">Splitting since</span>
                     <select
                       value={joinDate}
                       onChange={(e) => onUpdateJoinDate(m.id, e.target.value)}
-                      className="font-body font-bold text-teal text-[11px] bg-transparent outline-none"
+                      className="font-body font-bold text-teal text-[12px] bg-transparent outline-none"
                     >
                       {dayOptions.map((d) => (
                         <option key={d} value={d}>
@@ -162,7 +162,7 @@ export default function ParticipantsDetail({
                     <select
                       value={joinTime}
                       onChange={(e) => onUpdateJoinTime(m.id, e.target.value)}
-                      className="font-body font-bold text-teal text-[11px] bg-transparent outline-none"
+                      className="font-body font-bold text-teal text-[12px] bg-transparent outline-none"
                     >
                       {HOUR_OPTIONS.map((h) => (
                         <option key={h} value={h}>

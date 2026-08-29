@@ -170,7 +170,7 @@ export default function PollDetail({
                       {option.label}
                       {isWinner && <span className="text-[13px]">🏆</span>}
                       {youVoted && !poll.closed && (
-                        <span className="font-body font-bold text-[10px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
+                        <span className="font-body font-bold text-[11px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
                           Your vote
                         </span>
                       )}
