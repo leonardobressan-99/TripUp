@@ -616,19 +616,22 @@ export default function TripDetail({
                       >
                         <p className="font-body text-grey-ink text-[13px] w-[64px] shrink-0 pt-0.5">{item.time}</p>
                         <div className="flex-1 min-w-0">
-                          <button
-                            onClick={() => onOpenItineraryItem(item.id)}
-                            className="text-left w-full flex items-center gap-2"
-                          >
-                            <p
-                              className={`font-body font-bold text-[15px] ${
-                                item.pending && !pollWinner ? "text-teal" : "text-ink"
-                              }`}
+                          {/* The dinner isn't a plan yet while the poll is still
+                              open — there's no place decided to open a page about,
+                              so it gets neither a chevron nor a tap until then. */}
+                          {item.pending && !pollWinner ? (
+                            <p className="font-body font-bold text-teal text-[15px]">{item.title}</p>
+                          ) : (
+                            <button
+                              onClick={() => onOpenItineraryItem(item.id)}
+                              className="text-left w-full flex items-center gap-2"
                             >
-                              {item.pending && pollWinner ? `Last dinner — ${pollWinner.label}` : item.title}
-                            </p>
-                            <img src={chevronIcon} alt="" className="w-3.5 h-3.5 shrink-0 opacity-40" />
-                          </button>
+                              <p className="font-body font-bold text-ink text-[15px]">
+                                {item.pending && pollWinner ? `Last dinner — ${pollWinner.label}` : item.title}
+                              </p>
+                              <img src={chevronIcon} alt="" className="w-3.5 h-3.5 shrink-0 opacity-40" />
+                            </button>
+                          )}
                           {item.pending && pollWinner ? (
                             <>
                               <p className="font-body text-teal text-[13px] mt-0.5">🎉 Decided by poll</p>
