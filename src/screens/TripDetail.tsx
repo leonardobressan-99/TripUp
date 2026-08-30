@@ -609,7 +609,7 @@ export default function TripDetail({
                       )}
                       <div
                         className={`flex gap-3 pt-2.5 border-t border-[#EDE7DA] first:border-t-0 ${
-                          item.pending && pollWinner ? "pb-4" : "pb-2.5"
+                          item.pending && pollWinner && !tripComplete ? "pb-4" : "pb-2.5"
                         }`}
                       >
                         <p className="font-body text-grey-ink text-[13px] w-[64px] shrink-0 pt-0.5">{item.time}</p>
@@ -624,29 +624,33 @@ export default function TripDetail({
                           {item.pending && pollWinner ? (
                             <>
                               <p className="font-body text-teal text-[13px] mt-0.5">🎉 Decided by poll</p>
-                              <div className="flex items-center gap-2 mt-5">
-                                <button
-                                  onClick={() =>
-                                    window.open(
-                                      `https://www.google.com/maps/search/${encodeURIComponent(
-                                        `${pollWinner.label} Lisbon Portugal`
-                                      )}`,
-                                      "_blank",
-                                      "noopener,noreferrer"
-                                    )
-                                  }
-                                  className="h-9 px-4 rounded-[10px] bg-white flex items-center justify-center"
-                                  style={{ border: "1.5px solid #0EA5A0" }}
-                                >
-                                  <span className="font-body font-bold text-teal text-[15px]">Directions</span>
-                                </button>
-                                <button
-                                  onClick={onAddExpense}
-                                  className="h-9 px-4 rounded-[10px] bg-teal flex items-center justify-center"
-                                >
-                                  <span className="font-body font-bold text-white text-[15px]">Add expense</span>
-                                </button>
-                              </div>
+                              {/* Once the dinner is logged there's nothing left to do here —
+                                  Directions and Add expense stop being actions and start being clutter. */}
+                              {!tripComplete && (
+                                <div className="flex items-center gap-2 mt-5">
+                                  <button
+                                    onClick={() =>
+                                      window.open(
+                                        `https://www.google.com/maps/search/${encodeURIComponent(
+                                          `${pollWinner.label} Lisbon Portugal`
+                                        )}`,
+                                        "_blank",
+                                        "noopener,noreferrer"
+                                      )
+                                    }
+                                    className="h-9 px-4 rounded-[10px] bg-white flex items-center justify-center"
+                                    style={{ border: "1.5px solid #0EA5A0" }}
+                                  >
+                                    <span className="font-body font-bold text-teal text-[15px]">Directions</span>
+                                  </button>
+                                  <button
+                                    onClick={onAddExpense}
+                                    className="h-9 px-4 rounded-[10px] bg-teal flex items-center justify-center"
+                                  >
+                                    <span className="font-body font-bold text-white text-[15px]">Add expense</span>
+                                  </button>
+                                </div>
+                              )}
                             </>
                           ) : (
                             item.subtitle && (
