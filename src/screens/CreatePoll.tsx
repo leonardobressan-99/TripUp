@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
+import { topFadeMask } from "../components/topFade";
 import ScreenHeader from "../components/ScreenHeader";
 import { categoryMeta, CATEGORY_ORDER, type ExpenseCategory } from "../store/mockData";
 import deleteBadge from "../assets/icons/Delete-badge.svg";
@@ -54,7 +55,10 @@ export default function CreatePoll({ onBack, onCreate }: CreatePollProps) {
     >
       <StatusBar tone="dark" />
 
-      <div className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10">
+      <div
+        className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10"
+        style={topFadeMask(64)}
+      >
         <ScreenHeader title="Lisbon trip" onBack={onBack} />
 
         <p className="font-body font-bold text-teal text-[12px] uppercase tracking-wide mt-4">New poll</p>

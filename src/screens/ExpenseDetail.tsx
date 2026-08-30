@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
+import { topFadeMask } from "../components/topFade";
 import ScreenHeader from "../components/ScreenHeader";
 import ExpenseItemRow from "../components/ExpenseItemRow";
 import Avatar from "../components/Avatar";
@@ -135,7 +136,10 @@ export default function ExpenseDetail({
     >
       <StatusBar tone="dark" />
 
-      <div className={`flex-1 overflow-y-auto px-5 pt-[64px] ${dirty ? "pb-[120px]" : "pb-10"}`}>
+      <div
+        className={`flex-1 overflow-y-auto px-5 pt-[64px] ${dirty ? "pb-[120px]" : "pb-10"}`}
+        style={topFadeMask(64)}
+      >
         <ScreenHeader title="Lisbon trip" onBack={onBack} />
         <h1 className="font-body font-bold text-ink text-[28px] leading-tight mt-1">{expense.name}</h1>
 

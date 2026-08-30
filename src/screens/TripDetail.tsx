@@ -4,6 +4,7 @@ import StatusBar from "../components/StatusBar";
 import AnimatedAmount from "../components/AnimatedAmount";
 import MagicAddButton from "../components/MagicAddButton";
 import ScreenHeader from "../components/ScreenHeader";
+import { topFadeMask } from "../components/topFade";
 import TripMap from "../components/TripMap";
 import ActionSheet from "../components/ActionSheet";
 import Avatar from "../components/Avatar";
@@ -69,6 +70,13 @@ type TripDetailProps = {
 
 const TABS: Tab[] = ["summary", "itinerary", "budget"];
 const TAB_LABELS: Record<Tab, string> = { summary: "Summary", itinerary: "Itinerary", budget: "Budget" };
+
+/**
+ * Height of the soft edge under the tabs. Capped at the panes' own top padding
+ * so the mask is opaque again by the time the first card or photo begins: any
+ * taller and it veils the top of that image while the pane sits at rest.
+ */
+const TAB_FADE = 20;
 
 type BudgetStep = "list" | "settle" | "confirmed" | "recap";
 
@@ -410,6 +418,7 @@ export default function TripDetail({
               exit={{ opacity: 0, x: -direction * 40 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="absolute inset-0 overflow-y-auto px-5 pt-5 pb-28 flex flex-col gap-4"
+              style={topFadeMask(TAB_FADE)}
             >
               <div className="relative w-full shrink-0" style={{ height: 200 }}>
                 <motion.div
@@ -582,6 +591,7 @@ export default function TripDetail({
               exit={{ opacity: 0, x: -direction * 40 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="absolute inset-0 overflow-y-auto px-5 pt-5 pb-28 flex flex-col gap-4"
+              style={topFadeMask(TAB_FADE)}
             >
               <TripMap
                 introPlayed={mapIntroPlayed}
@@ -686,6 +696,7 @@ export default function TripDetail({
               exit={{ opacity: 0, x: -direction * 40 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="absolute inset-0 overflow-y-auto px-5 pt-5 pb-28"
+              style={topFadeMask(TAB_FADE)}
             >
               <AnimatePresence mode="wait">
                 {budgetStep === "list" && (

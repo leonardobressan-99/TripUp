@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
+import { topFadeMask } from "../components/topFade";
 import ScreenHeader from "../components/ScreenHeader";
 import Avatar from "../components/Avatar";
 import IOSKeyboard from "../components/IOSKeyboard";
@@ -110,7 +111,10 @@ export default function ParticipantsDetail({
     <div className="relative w-full h-full flex flex-col overflow-hidden" style={{ backgroundColor: "#FAF6EE" }}>
       <StatusBar tone="dark" />
 
-      <div className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10">
+      <div
+        className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10"
+        style={topFadeMask(64)}
+      >
         <ScreenHeader title="Lisbon trip" onBack={onBack} />
         <h1 className="font-body font-bold text-ink text-[28px] leading-tight mt-1">Participants</h1>
         <p className="font-body text-grey-ink text-[14px] mt-1 mb-5">{currentMembers.length} people on this trip</p>

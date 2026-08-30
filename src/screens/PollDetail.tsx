@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
+import { topFadeMask } from "../components/topFade";
 import ScreenHeader from "../components/ScreenHeader";
 import AvatarStack from "../components/AvatarStack";
 import Avatar from "../components/Avatar";
@@ -74,7 +75,10 @@ export default function PollDetail({
     >
       <StatusBar tone="dark" />
 
-      <div className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10">
+      <div
+        className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10"
+        style={topFadeMask(64)}
+      >
         <ScreenHeader title="Lisbon trip" onBack={onBack} />
         <span className="font-body font-bold text-teal text-[13px] uppercase tracking-wide bg-teal/10 px-2.5 py-1 rounded-full inline-flex items-center gap-1 mt-4">
           <span>{categoryMeta[poll.category].icon}</span>

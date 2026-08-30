@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
+import { topFadeMask } from "../components/topFade";
 import ScreenHeader from "../components/ScreenHeader";
 import ConfirmDialog from "../components/ConfirmDialog";
 import deleteBadge from "../assets/icons/Delete-badge.svg";
@@ -95,7 +96,10 @@ export default function EditItinerary({
     >
       <StatusBar tone="dark" />
 
-      <div className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10">
+      <div
+        className="flex-1 overflow-y-auto px-5 pt-[64px] pb-10"
+        style={topFadeMask(64)}
+      >
         <ScreenHeader title="Lisbon trip" onBack={onBack} />
         <h1 className="font-body font-bold text-ink text-[28px] leading-tight mt-1">Edit itinerary</h1>
         <p className="font-body text-grey-ink text-[13px] mt-1">
