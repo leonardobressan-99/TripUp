@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import StatusBar from "../components/StatusBar";
 import Dock from "../components/Dock";
-import appIcon from "../assets/images/IconTripUp_DEF.png";
+import appIcon from "../assets/images/IconTripUp_DEF.webp";
 
 type SpringboardProps = {
   onOpenApp: () => void;

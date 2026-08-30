@@ -1,7 +1,7 @@
-import createPollIcon from "../assets/images/CreatePoll_Icon.png";
-import addExpenseIcon from "../assets/images/AddExpense_Icon.png";
-import addMemberIcon from "../assets/images/AddMember_Icon.png";
-import addTripIcon from "../assets/images/AddTrip_Icon.png";
+import createPollIcon from "../assets/images/CreatePoll_Icon.webp";
+import addExpenseIcon from "../assets/images/AddExpense_Icon.webp";
+import addMemberIcon from "../assets/images/AddMember_Icon.webp";
+import addTripIcon from "../assets/images/AddTrip_Icon.webp";
 
 export function PollIcon() {
   return <img src={createPollIcon} alt="" className="w-full h-full object-contain" />;

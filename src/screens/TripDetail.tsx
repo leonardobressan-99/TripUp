@@ -12,9 +12,9 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import InfoDialog from "../components/InfoDialog";
 import { PollIcon, ExpenseIcon, MemberIcon } from "../components/ActionIcons";
 import checkBadge from "../assets/icons/check-badge.svg";
-import creditCardIcon from "../assets/images/CreditCard.png";
-import applePayIcon from "../assets/images/ApplePay.png";
-import cashIcon from "../assets/images/Cash.png";
+import creditCardIcon from "../assets/images/CreditCard.webp";
+import applePayIcon from "../assets/images/ApplePay.webp";
+import cashIcon from "../assets/images/Cash.webp";
 import {
   trips,
   formatDateRange,

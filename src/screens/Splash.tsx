@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import StatusBar from "../components/StatusBar";
-import logoMark from "../assets/images/Logo_Mark_Teal.png";
+import logoMark from "../assets/images/Logo_Mark_Teal.webp";
 
 type SplashProps = {
   onEnter: () => void;

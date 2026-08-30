@@ -4,7 +4,7 @@ import StatusBar from "../components/StatusBar";
 import ExpenseItemRow from "../components/ExpenseItemRow";
 import ScreenHeader from "../components/ScreenHeader";
 import ConfirmDialog from "../components/ConfirmDialog";
-import receiptPhoto from "../assets/images/skewed-receipt-card.jpg";
+import receiptPhoto from "../assets/images/skewed-receipt-card.webp";
 import {
   scannedReceiptItems,
   categoryMeta,

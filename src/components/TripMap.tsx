@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { itineraryMapPins } from "../store/mockData";
-import lisbonMap from "../assets/images/LisbonMap.jpg";
+import lisbonMap from "../assets/images/LisbonMap.webp";
 import MapClouds from "./MapClouds";
 
 type TripMapProps = {

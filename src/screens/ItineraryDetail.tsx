@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
 import Avatar from "../components/Avatar";
 import backArrowIcon from "../assets/icons/Back_Arrow.svg";
-import lisbonCover from "../assets/images/Lisbon.jpg";
+import lisbonCover from "../assets/images/Lisbon.webp";
 import { expenseShares } from "../store/balances";
 import type { ExpenseHistoryItem, ItineraryItem, Member } from "../store/mockData";
 

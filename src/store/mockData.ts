@@ -1,22 +1,22 @@
-import ari from "../assets/images/avatar-4.png";
-import jo from "../assets/images/avatar-2.png";
-import mia from "../assets/images/avatar-5.png";
-import nic from "../assets/images/avatar-3.png";
-import ren from "../assets/images/avatar-1.png";
+import ari from "../assets/images/avatar-4.webp";
+import jo from "../assets/images/avatar-2.webp";
+import mia from "../assets/images/avatar-5.webp";
+import nic from "../assets/images/avatar-3.webp";
+import ren from "../assets/images/avatar-1.webp";
 
-import lisbon from "../assets/images/Lisbon.jpg";
-import japan from "../assets/images/japan.jpg";
-import brazil from "../assets/images/Brazil.jpg";
+import lisbon from "../assets/images/Lisbon.webp";
+import japan from "../assets/images/japan.webp";
+import brazil from "../assets/images/Brazil.webp";
 
-import itinCheckin from "../assets/images/itin-checkin.jpeg";
-import itinWelcomeDinner from "../assets/images/itin-welcome-dinner.jpg";
-import itinBelem from "../assets/images/itin-belem.jpg";
-import itinFado from "../assets/images/itin-fado.jpg";
-import itinSintra from "../assets/images/itin-sintra.jpg";
-import itinTram28 from "../assets/images/itin-tram28.jpg";
+import itinCheckin from "../assets/images/itin-checkin.webp";
+import itinWelcomeDinner from "../assets/images/itin-welcome-dinner.webp";
+import itinBelem from "../assets/images/itin-belem.webp";
+import itinFado from "../assets/images/itin-fado.webp";
+import itinSintra from "../assets/images/itin-sintra.webp";
+import itinTram28 from "../assets/images/itin-tram28.webp";
 import itinBairroAlto from "../assets/images/itin-bairro-alto.webp";
-import itinCascais from "../assets/images/itin-cascais.avif";
-import restaurantWinner from "../assets/images/RestaurantWinner.jpg";
+import itinCascais from "../assets/images/itin-cascais.webp";
+import restaurantWinner from "../assets/images/RestaurantWinner.webp";
 
 export type Member = {
   id: string;

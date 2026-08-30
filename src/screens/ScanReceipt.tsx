@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StatusBar from "../components/StatusBar";
 import ScreenHeader from "../components/ScreenHeader";
-import receiptPhoto from "../assets/images/skewed-receipt-card.jpg";
+import receiptPhoto from "../assets/images/skewed-receipt-card.webp";
 
 type ScanReceiptProps = {
   onBack: () => void;

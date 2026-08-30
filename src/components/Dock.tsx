@@ -1,7 +1,7 @@
-import phoneIcon from "../assets/images/Dock_Phone2.png";
-import appStoreIcon from "../assets/images/Dock_AppStore.png";
-import cameraIcon from "../assets/images/Dock_Camera.png";
-import clockIcon from "../assets/images/Dock_Clock.png";
+import phoneIcon from "../assets/images/Dock_Phone2.webp";
+import appStoreIcon from "../assets/images/Dock_AppStore.webp";
+import cameraIcon from "../assets/images/Dock_Camera.webp";
+import clockIcon from "../assets/images/Dock_Clock.webp";
 
 export default function Dock() {
   return (

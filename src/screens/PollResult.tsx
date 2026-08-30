@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import StatusBar from "../components/StatusBar";
-import restaurantPhoto from "../assets/images/RestaurantWinner.jpg";
+import restaurantPhoto from "../assets/images/RestaurantWinner.webp";
 import backArrowIcon from "../assets/icons/Back_Arrow.svg";
 import type { Poll } from "../store/mockData";
 

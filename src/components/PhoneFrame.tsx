@@ -1,15 +1,21 @@
 import { useEffect, useState, type ReactNode } from "react";
-import iphoneFrame from "../assets/images/iphone-17-pro-frame.png";
+import iphoneFrame from "../assets/images/iphone-17-pro-frame.webp";
 
 const DEVICE_W = 402;
 const DEVICE_H = 874;
-// iphone-17-pro-frame.png is 2920x5328 with a transparent rounded-rect
-// screen cutout at (286,95)-(2586,5178), measured directly from the true
-// glass-vs-bezel pixel transitions in the source photo (not just eyeballed)
-// to avoid leaving a sliver of "off" glass visible above/below the app
-// content. Scale so the cutout height matches DEVICE_H exactly (content is
-// then very slightly wider than the cutout, which is safe — the opaque
-// frame sits above and masks the overflow rather than leaving a gap).
+// The mockup has a transparent rounded-rect screen cutout at
+// (286,135)-(2586,5178), measured directly from the true glass-vs-bezel pixel
+// transitions in the source photo (not just eyeballed) to avoid leaving a
+// sliver of "off" glass visible above/below the app content. Scale so the
+// cutout height matches DEVICE_H exactly (content is then very slightly wider
+// than the cutout, which is safe — the opaque frame sits above and masks the
+// overflow rather than leaving a gap).
+//
+// These are the coordinates of the 2920x5328 original the cutout was measured
+// against. The shipped file is half that, but only the ratios between these
+// numbers matter: the <img> is stretched to FRAME_W x FRAME_H by CSS, so its
+// intrinsic size never enters the layout. Keep them in this space so the
+// measurements stay checkable against the original photo.
 const SOURCE_W = 2920;
 const SOURCE_H = 5328;
 const CUTOUT = { x0: 286, y0: 135, x1: 2586, y1: 5178 };
