@@ -61,6 +61,9 @@ type TripDetailProps = {
   itinerary: ItineraryItem[];
   dayOptions: string[];
   onEditItinerary: () => void;
+  // True once Ari has logged the dinner, which is the last thing the trip is
+  // waiting on — the map then reads every stop as visited.
+  tripComplete: boolean;
 };
 
 const TABS: Tab[] = ["summary", "itinerary", "budget"];
@@ -204,6 +207,7 @@ export default function TripDetail({
   itinerary,
   dayOptions,
   onEditItinerary,
+  tripComplete,
 }: TripDetailProps) {
   const [tab, setTab] = useState<Tab>(initialTab ?? "summary");
   const [tabReady, setTabReady] = useState(false);
@@ -577,7 +581,12 @@ export default function TripDetail({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="absolute inset-0 overflow-y-auto px-5 pt-5 pb-28 flex flex-col gap-4"
             >
-              <TripMap introPlayed={mapIntroPlayed} onIntroPlayed={onMapIntroPlayed} />
+              <TripMap
+                introPlayed={mapIntroPlayed}
+                onIntroPlayed={onMapIntroPlayed}
+                dinnerPinLabel={pollWinner?.label}
+                allVisited={tripComplete}
+              />
 
               <Card>
                 <div className="flex items-center justify-between mb-1">

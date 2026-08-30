@@ -263,6 +263,7 @@ function AppInner() {
           itinerary={itineraryItems}
           dayOptions={dayOptions}
           onEditItinerary={() => setScreen("editItinerary")}
+          tripComplete={savedExpenses.length > 0}
         />
       )}
 

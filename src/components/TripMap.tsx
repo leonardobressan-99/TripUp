@@ -9,9 +9,21 @@ type TripMapProps = {
   // the Itinerary tab, so local state would replay the intro on every visit.
   introPlayed: boolean;
   onIntroPlayed: () => void;
+  // The restaurant the poll landed on. Undefined while the poll is still open,
+  // which keeps tonight's dinner off the map entirely — pinning a place before
+  // the group has chosen one would be showing a decision nobody has made.
+  dinnerPinLabel?: string;
+  // Once the dinner is paid for there is nothing left to do, so every stop
+  // reads as visited rather than leaving the last one flagged as upcoming.
+  allVisited: boolean;
 };
 
-export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
+export default function TripMap({
+  introPlayed,
+  onIntroPlayed,
+  dinnerPinLabel,
+  allVisited,
+}: TripMapProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
@@ -25,8 +37,12 @@ export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
 
       {!introPlayed && <MapClouds onDone={onIntroPlayed} />}
 
-      {itineraryMapPins.map((pin) => {
+      {itineraryMapPins
+        .filter((pin) => pin.id !== "restaurant" || dinnerPinLabel)
+        .map((pin) => {
         const isActive = activeId === pin.id;
+        const label = pin.id === "restaurant" ? dinnerPinLabel : pin.label;
+        const visited = allVisited || pin.visited;
         return (
           <button
             key={pin.id}
@@ -52,7 +68,7 @@ export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
                   className="font-body font-bold text-white text-center"
                   style={{ fontSize: 11, lineHeight: 1.1 }}
                 >
-                  {pin.label}
+                  {label}
                 </span>
               </div>
             )}
@@ -61,7 +77,7 @@ export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
               style={{
                 width: isActive ? 15 : 11,
                 height: isActive ? 15 : 11,
-                background: pin.visited ? "#0EA5A0" : "#FF5C72",
+                background: visited ? "#0EA5A0" : "#FF5C72",
                 border: "2px solid white",
                 boxShadow: "0 2px 5px rgba(28,37,65,0.35)",
               }}
@@ -80,12 +96,14 @@ export default function TripMap({ introPlayed, onIntroPlayed }: TripMapProps) {
             Visited
           </span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-coral" />
-          <span className="font-body font-bold text-ink" style={{ fontSize: 11 }}>
-            Upcoming
-          </span>
-        </div>
+        {!allVisited && (
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-coral" />
+            <span className="font-body font-bold text-ink" style={{ fontSize: 11 }}>
+              Upcoming
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
