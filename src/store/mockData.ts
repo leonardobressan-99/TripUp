@@ -109,6 +109,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Welcome dinner",
     subtitle: "Time Out Market",
     emoji: "🍽️",
+    expenseId: "e7",
     duration: "2h",
     description:
       "One hall, dozens of counters — everyone orders what they feel like and the table sorts itself out. Easiest possible first night with a group this size.",
@@ -120,6 +121,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Belém walking tour",
     subtitle: "Belém",
     emoji: "🗼",
+    expenseId: "e8",
     duration: "3-4h",
     description:
       "The tower, the monastery and the monument to the discoveries, all within a short walk of each other along the river. Worth queueing for the pastéis at the end.",
@@ -155,6 +157,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Tram 28 ride",
     subtitle: "Graça to Estrela",
     emoji: "🚋",
+    expenseId: "e9",
     duration: "1h",
     description:
       "The classic yellow tram through the old quarters. Board at Graça rather than Martim Moniz and there's a real chance of getting a seat.",
@@ -178,6 +181,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Beach at Cascais",
     subtitle: "Cascais",
     emoji: "🏖️",
+    expenseId: "e10",
     duration: "Full day",
     description:
       "Forty minutes on the train along the coast. No fixed plan — swim, lunch by the water, and back whenever the group feels like it.",
@@ -333,6 +337,25 @@ const ORIGINAL_MEMBERS = trips[0].memberIds;
 
 export const expenseHistory: ExpenseHistoryItem[] = [
   {
+    id: "e5",
+    name: "Farewell gift for Mia",
+    date: "2026-08-23",
+    amount: 35.0,
+    paidById: "ari",
+    items: [{ name: "Perfume bottle", amount: 35, category: "shopping", splitIds: ["mia"] }],
+  },
+  {
+    id: "e10",
+    name: "Cascais beach day",
+    date: "2026-08-23",
+    amount: 96.0,
+    paidById: "ari",
+    items: [
+      { name: "Lunch by the water", amount: 64, category: "food", splitIds: ORIGINAL_MEMBERS },
+      { name: "Train tickets ×4", amount: 32, category: "transport", splitIds: ORIGINAL_MEMBERS },
+    ],
+  },
+  {
     id: "e6",
     name: "Bairro Alto bar hop",
     date: "2026-08-22",
@@ -344,12 +367,12 @@ export const expenseHistory: ExpenseHistoryItem[] = [
     ],
   },
   {
-    id: "e5",
-    name: "Farewell gift for Mia",
-    date: "2026-08-23",
-    amount: 35.0,
-    paidById: "ari",
-    items: [{ name: "Perfume bottle", amount: 35, category: "shopping", splitIds: ["mia"] }],
+    id: "e9",
+    name: "Tram 28 tickets",
+    date: "2026-08-22",
+    amount: 12.0,
+    paidById: "nic",
+    items: [{ name: "Tickets ×4", amount: 12, category: "transport", splitIds: ORIGINAL_MEMBERS }],
   },
   {
     id: "e4",
@@ -372,6 +395,28 @@ export const expenseHistory: ExpenseHistoryItem[] = [
     items: [
       { name: "Fado show tickets ×5", amount: 100, category: "experience", splitIds: ORIGINAL_MEMBERS },
       { name: "Port wine tasting", amount: 20, category: "drinks", splitIds: ORIGINAL_MEMBERS },
+    ],
+  },
+  {
+    id: "e8",
+    name: "Belém walking tour",
+    date: "2026-08-20",
+    amount: 72.0,
+    paidById: "mia",
+    items: [
+      { name: "Guided tour ×4", amount: 48, category: "experience", splitIds: ORIGINAL_MEMBERS },
+      { name: "Monastery entry ×4", amount: 24, category: "experience", splitIds: ORIGINAL_MEMBERS },
+    ],
+  },
+  {
+    id: "e7",
+    name: "Welcome dinner",
+    date: "2026-08-19",
+    amount: 124.0,
+    paidById: "jo",
+    items: [
+      { name: "Plates to share", amount: 92, category: "food", splitIds: ORIGINAL_MEMBERS },
+      { name: "Wine & beers", amount: 32, category: "drinks", splitIds: ORIGINAL_MEMBERS },
     ],
   },
   {

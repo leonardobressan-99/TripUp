@@ -88,12 +88,14 @@ function AppInner() {
   const [restaurantName, setRestaurantName] = useState("");
   // Mia has already paid Nic back, which is why that pair shows as settled.
   // Everything still outstanding gets consolidated by the simplifier, so the
-  // seeded expenses land on the balances screen as four raw debts merged into
+  // seeded expenses land on the balances screen as five raw debts merged into
   // three transfers, with Ari owing Jo (Pay) and the rest between other
-  // members. The amount matches that pair's raw balance exactly — a different
-  // figure would leave a stray cent open between Mia and Nic.
+  // members. The amount is that pair's raw balance to the cent — anything else
+  // leaves a few stray cents open between Mia and Nic and puts a fourth row
+  // back on the screen, so it has to be recomputed whenever an expense that
+  // touches either of them changes.
   const [settlements, setSettlements] = useState<SettlementRecord[]>([
-    { id: "seed-settle-1", fromId: "mia", toId: "nic", amount: 121.77 },
+    { id: "seed-settle-1", fromId: "mia", toId: "nic", amount: 106.77 },
   ]);
 
   const trip = trips[0];
