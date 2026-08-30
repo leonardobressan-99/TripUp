@@ -7,7 +7,7 @@ import lisbonCover from "../assets/images/Lisbon.jpg";
 import { expenseShares } from "../store/balances";
 import type { ExpenseHistoryItem, ItineraryItem, Member } from "../store/mockData";
 
-type Tab = "details" | "group" | "cost";
+type Tab = "details" | "group";
 
 type ItineraryDetailProps = {
   item: ItineraryItem;
@@ -47,11 +47,8 @@ export default function ItineraryDetail({
 }: ItineraryDetailProps) {
   const [tab, setTab] = useState<Tab>("details");
 
-  // The Cost tab only appears for plans money was actually spent on, rather
-  // than sitting there empty on the ones nobody paid for.
   const tabs: { key: Tab; label: string }[] = [
     { key: "details", label: "Details" },
-    ...(expense ? [{ key: "cost" as Tab, label: "Cost" }] : []),
     { key: "group", label: "Group" },
   ];
   const tabIndex = Math.max(0, tabs.findIndex((t) => t.key === tab));
@@ -93,9 +90,12 @@ export default function ItineraryDetail({
           </button>
 
           <span
-            className="absolute top-[64px] right-5 h-9 px-3.5 rounded-full flex items-center font-body font-bold text-[12px]"
+            className="absolute top-[64px] right-5 h-9 px-4 rounded-full flex items-center font-body font-bold text-[12px] uppercase tracking-wide"
             style={{
-              background: "rgba(255,255,255,0.9)",
+              // Outlined pill: a ring in the state colour over a pale fill of
+              // the same hue, rather than a plain white chip.
+              border: `1.5px solid ${visited ? "#0EA5A0" : "#FF5C72"}`,
+              background: visited ? "rgba(240,251,250,0.94)" : "rgba(255,240,242,0.94)",
               color: visited ? "#0EA5A0" : "#FF5C72",
             }}
           >
@@ -204,65 +204,61 @@ export default function ItineraryDetail({
                     <span className="font-body font-bold text-teal text-[13px]">Decided by poll</span>
                   </div>
                 )}
-              </motion.div>
-            ) : tab === "cost" && expense && shares && payer ? (
-              <motion.div
-                key="cost"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: "easeInOut" }}
-              >
-                <h2 className="font-body font-bold text-ink text-[18px]">What it cost</h2>
-                <p className="font-body text-grey-ink text-[13px] mt-0.5">{expense.name}</p>
 
-                <div
-                  className="bg-white rounded-[20px] p-5 mt-3"
-                  style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
-                >
-                  <p className="font-heading font-semibold text-teal text-[32px] leading-tight">
-                    €{expense.amount.toFixed(2)}
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Avatar member={payer} size={24} />
-                    <p className="font-body text-grey-ink text-[13px]">
-                      Paid by <span className="font-bold text-ink">{payer.name}</span>
-                      {payer.isYou ? " (You)" : ""}
-                    </p>
-                  </div>
+                {expense && shares && payer && (
+                  <>
+                    <h2 className="font-body font-bold text-ink text-[18px] mt-7">What it cost</h2>
+                    <p className="font-body text-grey-ink text-[13px] mt-0.5">{expense.name}</p>
 
-                  <p className="font-body font-bold text-grey-ink text-[11px] uppercase tracking-wide mt-5 mb-2.5">
-                    Split {shares.size} ways
-                  </p>
-                  <div className="flex flex-col">
-                    {members.map((m, i) => {
-                      const cents = shares.get(m.id);
-                      return (
-                        <div
-                          key={m.id}
-                          className={`flex items-center gap-3 py-2.5 ${i > 0 ? "border-t border-[#EDE7DA]" : ""}`}
-                          style={{ opacity: cents ? 1 : 0.45 }}
-                        >
-                          <Avatar member={m} size={32} />
-                          <p className="font-body font-bold text-ink text-[14px] flex-1">
-                            {m.name}
-                            {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
-                          </p>
-                          {cents ? (
-                            <p className="font-body font-bold text-ink text-[14px]">€{(cents / 100).toFixed(2)}</p>
-                          ) : (
-                            /* Someone can sit out a single line on the receipt — the
-                               wine everyone else shared — so say so rather than
-                               showing them a misleading €0.00. */
-                            <span className="font-body font-bold text-coral text-[11px] uppercase tracking-wide">
-                              Not included
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                    <div
+                      className="bg-white rounded-[20px] p-5 mt-3"
+                      style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
+                    >
+                      <p className="font-heading font-semibold text-teal text-[32px] leading-tight">
+                        €{expense.amount.toFixed(2)}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Avatar member={payer} size={24} />
+                        <p className="font-body text-grey-ink text-[13px]">
+                          Paid by <span className="font-bold text-ink">{payer.name}</span>
+                          {payer.isYou ? " (You)" : ""}
+                        </p>
+                      </div>
+
+                      <p className="font-body font-bold text-grey-ink text-[11px] uppercase tracking-wide mt-5 mb-2.5">
+                        Split {shares.size} ways
+                      </p>
+                      <div className="flex flex-col">
+                        {members.map((m, i) => {
+                          const cents = shares.get(m.id);
+                          return (
+                            <div
+                              key={m.id}
+                              className={`flex items-center gap-3 py-2.5 ${i > 0 ? "border-t border-[#EDE7DA]" : ""}`}
+                              style={{ opacity: cents ? 1 : 0.45 }}
+                            >
+                              <Avatar member={m} size={32} />
+                              <p className="font-body font-bold text-ink text-[14px] flex-1">
+                                {m.name}
+                                {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
+                              </p>
+                              {cents ? (
+                                <p className="font-body font-bold text-ink text-[14px]">€{(cents / 100).toFixed(2)}</p>
+                              ) : (
+                                /* Someone can sit out a single line on the receipt — the
+                                   wine everyone else shared — so say so rather than
+                                   showing them a misleading €0.00. */
+                                <span className="font-body font-bold text-coral text-[11px] uppercase tracking-wide">
+                                  Not included
+                                </span>
+                              )}
+                            </div>
+                          );
+                            })}
+                          </div>
+                    </div>
+                  </>
+                )}
               </motion.div>
             ) : (
               <motion.div
