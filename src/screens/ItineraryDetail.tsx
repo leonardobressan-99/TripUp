@@ -1,13 +1,11 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, useTransform } from "framer-motion";
 import StatusBar from "../components/StatusBar";
 import Avatar from "../components/Avatar";
 import backArrowIcon from "../assets/icons/Back_Arrow.svg";
+import chevronIcon from "../assets/icons/Right_Arrow.svg";
 import lisbonCover from "../assets/images/Lisbon.webp";
 import { expenseShares } from "../store/balances";
 import type { ExpenseHistoryItem, ItineraryItem, Member } from "../store/mockData";
-
-type Tab = "details" | "group";
 
 type ItineraryDetailProps = {
   item: ItineraryItem;
@@ -22,6 +20,8 @@ type ItineraryDetailProps = {
   expense?: ExpenseHistoryItem | null;
   onBack: () => void;
   onAddExpense: () => void;
+  /** Opens the logged expense so the split can be corrected from here. */
+  onOpenExpense: (id: string) => void;
 };
 
 function Stat({ icon, value, label }: { icon: string; value: string; label: string }) {
@@ -44,14 +44,15 @@ export default function ItineraryDetail({
   expense,
   onBack,
   onAddExpense,
+  onOpenExpense,
 }: ItineraryDetailProps) {
-  const [tab, setTab] = useState<Tab>("details");
-
-  const tabs: { key: Tab; label: string }[] = [
-    { key: "details", label: "Details" },
-    { key: "group", label: "Group" },
-  ];
-  const tabIndex = Math.max(0, tabs.findIndex((t) => t.key === tab));
+  // The photo owns the top of the screen, and washing cream over it would only
+  // spoil it — so the band has no height at all until the hero has scrolled
+  // away, then grows in step with what is being cut off above.
+  const fadeHeight = useMotionValue(0);
+  const fadeSolid = useTransform(fadeHeight, (h) => h * 0.55);
+  const fadeMid = useTransform(fadeHeight, (h) => h * 0.8);
+  const fadeMask = useMotionTemplate`linear-gradient(180deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) ${fadeSolid}px, rgba(0,0,0,0.5) ${fadeMid}px, rgba(0,0,0,1) ${fadeHeight}px)`;
 
   const shares = expense ? expenseShares(expense, memberIds) : null;
   const payer = expense ? allMembers[expense.paidById] : null;
@@ -75,7 +76,11 @@ export default function ItineraryDetail({
     >
       <StatusBar tone="light" />
 
-      <div className="flex-1 overflow-y-auto pb-[110px]">
+      <motion.div
+        className={`flex-1 overflow-y-auto ${showAddExpense ? "pb-[110px]" : "pb-10"}`}
+        style={{ WebkitMaskImage: fadeMask, maskImage: fadeMask }}
+        onScroll={(e) => fadeHeight.set(Math.min(64, Math.max(0, e.currentTarget.scrollTop - 200)))}
+      >
         {/* hero */}
         <div className="relative w-full shrink-0" style={{ height: 290 }}>
           <img
@@ -157,196 +162,133 @@ export default function ItineraryDetail({
           </div>
         </div>
 
-        {/* tabs */}
         <div className="px-5 pt-5">
-          <div className="relative w-full flex bg-[#D9D9D9] rounded-full p-1" style={{ height: 44 }}>
-            <motion.div
-              className="absolute top-1 bottom-1 rounded-full bg-teal"
-              initial={false}
-              animate={{ left: `calc(${(tabIndex / tabs.length) * 100}% + 4px)` }}
-              style={{
-                width: `calc(${100 / tabs.length}% - 8px)`,
-                boxShadow:
-                  "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7)",
-              }}
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-            />
-            {tabs.map((t) => (
+          <h2 className="font-body font-bold text-ink text-[18px]">About this plan</h2>
+          <p className="font-body text-grey-ink text-[13px] mt-0.5">
+            {item.day} · {allDay ? "no set time" : item.time}
+          </p>
+
+          {item.description ? (
+            <p className="font-body text-ink text-[14px] leading-relaxed mt-3">{item.description}</p>
+          ) : (
+            <p className="font-body text-grey-ink text-[14px] leading-relaxed mt-3 italic">
+              No notes on this one yet — add some from Edit itinerary.
+            </p>
+          )}
+
+          {/* Directions belong with the description rather than pinned to
+              the bottom of the screen: it reads as part of "where this
+              is", and a sticky bar would sit over the cost card below. */}
+          <button
+            onClick={() =>
+              window.open(
+                `https://www.google.com/maps/search/${encodeURIComponent(mapQuery)}`,
+                "_blank",
+                "noopener,noreferrer"
+              )
+            }
+            className="w-full h-[52px] rounded-[10px] bg-teal flex items-center justify-center gap-2 mt-4"
+          >
+            <span className="font-body font-bold text-white text-[16px]">Get directions</span>
+            <span className="text-white text-[16px] leading-none">→</span>
+          </button>
+
+          {item.pending && resolvedTitle && (
+            <div
+              className="mt-4 rounded-[14px] px-4 py-3 flex items-center gap-2.5"
+              style={{ backgroundColor: "rgba(14,165,160,0.08)", border: "1.5px solid rgba(14,165,160,0.3)" }}
+            >
+              <span className="text-[16px]">🎉</span>
+              <span className="font-body font-bold text-teal text-[13px]">Decided by poll</span>
+            </div>
+          )}
+
+          {expense && shares && payer && (
+            <>
+              <h2 className="font-body font-bold text-ink text-[18px] mt-7">What it cost</h2>
+              <p className="font-body text-grey-ink text-[13px] mt-0.5">{expense.name}</p>
+
+              {/* The whole card opens the expense for editing. The split
+                  shown here is exactly what people want to change when
+                  they spot something wrong, and making them go find the
+                  same expense again under Budget is the long way round. */}
               <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`relative z-10 flex-1 flex items-center justify-center font-body font-bold text-[14px] transition-colors ${
-                  tab === t.key ? "text-white" : "text-ink"
-                }`}
+                type="button"
+                onClick={() => onOpenExpense(expense.id)}
+                className="w-full block text-left bg-white rounded-[20px] p-5 mt-3"
+                style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
               >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* tab content */}
-        <div className="px-5 pt-5">
-          <AnimatePresence mode="wait">
-            {tab === "details" ? (
-              <motion.div
-                key="details"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: "easeInOut" }}
-              >
-                <h2 className="font-body font-bold text-ink text-[18px]">About this plan</h2>
-                <p className="font-body text-grey-ink text-[13px] mt-0.5">
-                  {item.day} · {allDay ? "no set time" : item.time}
-                </p>
-
-                {item.description ? (
-                  <p className="font-body text-ink text-[14px] leading-relaxed mt-3">{item.description}</p>
-                ) : (
-                  <p className="font-body text-grey-ink text-[14px] leading-relaxed mt-3 italic">
-                    No notes on this one yet — add some from Edit itinerary.
-                  </p>
-                )}
-
-                {item.pending && resolvedTitle && (
-                  <div
-                    className="mt-4 rounded-[14px] px-4 py-3 flex items-center gap-2.5"
-                    style={{ backgroundColor: "rgba(14,165,160,0.08)", border: "1.5px solid rgba(14,165,160,0.3)" }}
-                  >
-                    <span className="text-[16px]">🎉</span>
-                    <span className="font-body font-bold text-teal text-[13px]">Decided by poll</span>
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-heading font-semibold text-teal text-[32px] leading-tight">
+                      €{expense.amount.toFixed(2)}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Avatar member={payer} size={24} />
+                      <p className="font-body text-grey-ink text-[13px]">
+                        Paid by <span className="font-bold text-ink">{payer.name}</span>
+                        {payer.isYou ? " (You)" : ""}
+                      </p>
+                    </div>
                   </div>
-                )}
-
-                {expense && shares && payer && (
-                  <>
-                    <h2 className="font-body font-bold text-ink text-[18px] mt-7">What it cost</h2>
-                    <p className="font-body text-grey-ink text-[13px] mt-0.5">{expense.name}</p>
-
-                    <div
-                      className="bg-white rounded-[20px] p-5 mt-3"
-                      style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
-                    >
-                      <p className="font-heading font-semibold text-teal text-[32px] leading-tight">
-                        €{expense.amount.toFixed(2)}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Avatar member={payer} size={24} />
-                        <p className="font-body text-grey-ink text-[13px]">
-                          Paid by <span className="font-bold text-ink">{payer.name}</span>
-                          {payer.isYou ? " (You)" : ""}
-                        </p>
-                      </div>
-
-                      <p className="font-body font-bold text-grey-ink text-[11px] uppercase tracking-wide mt-5 mb-2.5">
-                        Split {shares.size} ways
-                      </p>
-                      <div className="flex flex-col">
-                        {members.map((m, i) => {
-                          const cents = shares.get(m.id);
-                          return (
-                            <div
-                              key={m.id}
-                              className={`flex items-center gap-3 py-2.5 ${i > 0 ? "border-t border-[#EDE7DA]" : ""}`}
-                              style={{ opacity: cents ? 1 : 0.45 }}
-                            >
-                              <Avatar member={m} size={32} />
-                              <p className="font-body font-bold text-ink text-[14px] flex-1">
-                                {m.name}
-                                {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
-                              </p>
-                              {cents ? (
-                                <p className="font-body font-bold text-ink text-[14px]">€{(cents / 100).toFixed(2)}</p>
-                              ) : (
-                                /* Someone can sit out a single line on the receipt — the
-                                   wine everyone else shared — so say so rather than
-                                   showing them a misleading €0.00. */
-                                <span className="font-body font-bold text-coral text-[11px] uppercase tracking-wide">
-                                  Not included
-                                </span>
-                              )}
-                            </div>
-                          );
-                            })}
-                          </div>
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="group"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: "easeInOut" }}
-              >
-                <h2 className="font-body font-bold text-ink text-[18px]">Who's coming</h2>
-                <p className="font-body text-grey-ink text-[13px] mt-0.5">
-                  {members.length} {members.length === 1 ? "person" : "people"} on this trip
-                </p>
-
-                <div
-                  className="bg-white rounded-[20px] p-4 mt-3 flex flex-col"
-                  style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
-                >
-                  {members.map((m, i) => (
-                    <div
-                      key={m.id}
-                      className={`flex items-center gap-3 py-2.5 ${
-                        i > 0 ? "border-t border-[#EDE7DA]" : ""
-                      }`}
-                    >
-                      <Avatar member={m} size={38} />
-                      <p className="font-body font-bold text-ink text-[15px] flex-1">
-                        {m.name}
-                        {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
-                      </p>
-                      {m.isOrganizer && (
-                        <span className="font-body font-bold text-[11px] text-teal uppercase tracking-wide bg-teal/10 px-2 py-0.5 rounded-full">
-                          Organizer
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                  {/* Sits on the amount's own line rather than floating
+                      against the middle of the block. */}
+                  <img src={chevronIcon} alt="" className="w-5 h-5 shrink-0 mt-[9px]" />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
 
-      {/* sticky actions */}
-      <div
-        className="absolute bottom-0 left-0 right-0 px-5 pb-8 pt-4 flex items-center gap-2.5"
-        style={{ background: "linear-gradient(0deg, #FAF6EE 78%, rgba(250,246,238,0))" }}
-      >
-        <button
-          onClick={() =>
-            window.open(
-              `https://www.google.com/maps/search/${encodeURIComponent(mapQuery)}`,
-              "_blank",
-              "noopener,noreferrer"
-            )
-          }
-          className={`h-[52px] rounded-[10px] bg-teal flex items-center justify-center gap-2 ${
-            showAddExpense ? "flex-1" : "w-full"
-          }`}
+                <p className="font-body font-bold text-grey-ink text-[11px] uppercase tracking-wide mt-5 mb-2.5">
+                  Split {shares.size} ways
+                </p>
+                <div className="flex flex-col">
+                  {members.map((m, i) => {
+                    const cents = shares.get(m.id);
+                    return (
+                      <div
+                        key={m.id}
+                        className={`flex items-center gap-3 py-2.5 ${i > 0 ? "border-t border-[#EDE7DA]" : ""}`}
+                        style={{ opacity: cents ? 1 : 0.45 }}
+                      >
+                        <Avatar member={m} size={32} />
+                        <p className="font-body font-bold text-ink text-[14px] flex-1">
+                          {m.name}
+                          {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
+                        </p>
+                        {cents ? (
+                          <p className="font-body font-bold text-ink text-[14px]">€{(cents / 100).toFixed(2)}</p>
+                        ) : (
+                          /* Someone can sit out a single line on the receipt — the
+                             wine everyone else shared — so say so rather than
+                             showing them a misleading €0.00. */
+                          <span className="font-body font-bold text-coral text-[11px] uppercase tracking-wide">
+                            Not included
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </button>
+            </>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Logging the spend is the one thing left to do on a plan that has no
+          expense yet, so it stays pinned; everything else now sits in the flow. */}
+      {showAddExpense && (
+        <div
+          className="absolute bottom-0 left-0 right-0 px-5 pb-8 pt-4"
+          style={{ background: "linear-gradient(0deg, #FAF6EE 78%, rgba(250,246,238,0))" }}
         >
-          <span className="font-body font-bold text-white text-[16px]">Get directions</span>
-          <span className="text-white text-[16px] leading-none">→</span>
-        </button>
-        {showAddExpense && (
           <button
             onClick={onAddExpense}
-            className="flex-1 h-[52px] rounded-[10px] bg-white flex items-center justify-center"
+            className="w-full h-[52px] rounded-[10px] bg-white flex items-center justify-center"
             style={{ border: "1.5px solid #0EA5A0" }}
           >
             <span className="font-body font-bold text-teal text-[16px]">Add expense</span>
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </motion.div>
   );
 }

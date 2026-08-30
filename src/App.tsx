@@ -61,6 +61,9 @@ function AppInner() {
   const [expenseItems, setExpenseItems] = useState<WorkingItem[]>([]);
   const [paidById, setPaidById] = useState("ari");
   const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(null);
+  // Where the open expense was reached from, so its back button returns there
+  // rather than always dropping the user into the Budget tab.
+  const [expenseOrigin, setExpenseOrigin] = useState<"budget" | "itineraryDetail">("budget");
   const [savedExpenses, setSavedExpenses] = useState<ExpenseHistoryItem[]>([]);
   const [expenseOverrides, setExpenseOverrides] = useState<Record<string, ExpenseHistoryItem>>({});
   const [tripInitialTab, setTripInitialTab] = useState<Tab>("summary");
@@ -248,6 +251,7 @@ function AppInner() {
           onAddExpense={() => setScreen("receiptCapture")}
           onOpenExpense={(id) => {
             setSelectedExpenseId(id);
+            setExpenseOrigin("budget");
             setScreen("expenseDetail");
           }}
           onOpenParticipants={(autoInvite) => {
@@ -312,6 +316,11 @@ function AppInner() {
           }
           onBack={() => goToTrip("itinerary")}
           onAddExpense={() => setScreen("receiptCapture")}
+          onOpenExpense={(id) => {
+            setSelectedExpenseId(id);
+            setExpenseOrigin("itineraryDetail");
+            setScreen("expenseDetail");
+          }}
         />
       )}
 
@@ -445,7 +454,11 @@ function AppInner() {
             allMembers={allMembers}
             memberJoinDates={memberJoinDates}
             tripStartDate={trip.startDate}
-            onBack={() => goToTrip("budget")}
+            onBack={() =>
+              expenseOrigin === "itineraryDetail" && selectedItineraryItem
+                ? setScreen("itineraryDetail")
+                : goToTrip("budget")
+            }
             onSaveEdits={(updated) => setExpenseOverrides((prev) => ({ ...prev, [updated.id]: updated }))}
           />
         )}
