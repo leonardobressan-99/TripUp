@@ -166,6 +166,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Bairro Alto bar hop",
     subtitle: "Bairro Alto",
     emoji: "🍸",
+    expenseId: "e6",
     duration: "Evening",
     description:
       "Narrow streets, tiny bars, everyone drinking outside. Nothing needs booking — pick a street and follow whichever one sounds best.",
@@ -331,6 +332,17 @@ export type ExpenseHistoryItem = {
 const ORIGINAL_MEMBERS = trips[0].memberIds;
 
 export const expenseHistory: ExpenseHistoryItem[] = [
+  {
+    id: "e6",
+    name: "Bairro Alto bar hop",
+    date: "2026-08-22",
+    amount: 88.0,
+    paidById: "ari",
+    items: [
+      { name: "Rounds at Park Bar", amount: 48, category: "drinks", splitIds: ORIGINAL_MEMBERS },
+      { name: "Rounds at Pensão Amor", amount: 40, category: "drinks", splitIds: ORIGINAL_MEMBERS },
+    ],
+  },
   {
     id: "e5",
     name: "Farewell gift for Mia",
