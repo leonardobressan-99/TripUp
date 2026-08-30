@@ -78,7 +78,18 @@ export default function ItineraryDetail({
       <div className="flex-1 overflow-y-auto pb-[110px]">
         {/* hero */}
         <div className="relative w-full shrink-0" style={{ height: 290 }}>
-          <img src={lisbonCover} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img
+            src={item.image ?? lisbonCover}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Fades to the page background rather than a colour wash — the photo
+              stays true, it just blends into the card sitting on top of it
+              instead of ending in a hard edge. */}
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{ height: 96, background: "linear-gradient(180deg, rgba(250,246,238,0) 0%, #FAF6EE 100%)" }}
+          />
 
           <button
             onClick={onBack}

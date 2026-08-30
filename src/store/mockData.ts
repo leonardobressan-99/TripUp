@@ -8,6 +8,16 @@ import lisbon from "../assets/images/Lisbon.jpg";
 import japan from "../assets/images/japan.jpg";
 import brazil from "../assets/images/Brazil.jpg";
 
+import itinCheckin from "../assets/images/itin-checkin.jpeg";
+import itinWelcomeDinner from "../assets/images/itin-welcome-dinner.jpg";
+import itinBelem from "../assets/images/itin-belem.jpg";
+import itinFado from "../assets/images/itin-fado.jpg";
+import itinSintra from "../assets/images/itin-sintra.jpg";
+import itinTram28 from "../assets/images/itin-tram28.jpg";
+import itinBairroAlto from "../assets/images/itin-bairro-alto.webp";
+import itinCascais from "../assets/images/itin-cascais.avif";
+import restaurantWinner from "../assets/images/RestaurantWinner.jpg";
+
 export type Member = {
   id: string;
   name: string;
@@ -87,6 +97,9 @@ export type ItineraryItem = {
   duration?: string;
   /** The expense this plan was paid for with, when one was logged against it. */
   expenseId?: string;
+  /** Hero photo for the plan's detail page. Falls back to the trip cover for
+   * plans added in the editor, which have no photo of their own. */
+  image?: string;
 };
 
 export const itinerary: ItineraryItem[] = [
@@ -97,6 +110,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Check-in — Chiado Apartment",
     subtitle: "Rua do Alecrim",
     emoji: "🔑",
+    image: itinCheckin,
     expenseId: "e2",
     duration: "1h",
     description:
@@ -109,6 +123,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Welcome dinner",
     subtitle: "Time Out Market",
     emoji: "🍽️",
+    image: itinWelcomeDinner,
     expenseId: "e7",
     duration: "2h",
     description:
@@ -121,6 +136,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Belém walking tour",
     subtitle: "Belém",
     emoji: "🗼",
+    image: itinBelem,
     expenseId: "e8",
     duration: "3-4h",
     description:
@@ -133,6 +149,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Fado night",
     subtitle: "Alfama",
     emoji: "🎶",
+    image: itinFado,
     expenseId: "e3",
     duration: "2h",
     description:
@@ -145,6 +162,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Sintra day trip",
     subtitle: "Sintra",
     emoji: "🏰",
+    image: itinSintra,
     expenseId: "e4",
     duration: "Full day",
     description:
@@ -157,6 +175,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Tram 28 ride",
     subtitle: "Graça to Estrela",
     emoji: "🚋",
+    image: itinTram28,
     expenseId: "e9",
     duration: "1h",
     description:
@@ -169,6 +188,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Bairro Alto bar hop",
     subtitle: "Bairro Alto",
     emoji: "🍸",
+    image: itinBairroAlto,
     expenseId: "e6",
     duration: "Evening",
     description:
@@ -181,6 +201,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Beach at Cascais",
     subtitle: "Cascais",
     emoji: "🏖️",
+    image: itinCascais,
     expenseId: "e10",
     duration: "Full day",
     description:
@@ -193,6 +214,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Dinner",
     pending: true,
     emoji: "🍷",
+    image: restaurantWinner,
     duration: "2h",
     description:
       "Last night together before everyone flies home. The group voted on where to go, so the winner is booked in for tonight.",
