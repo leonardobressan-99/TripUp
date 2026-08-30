@@ -4,9 +4,10 @@ import StatusBar from "../components/StatusBar";
 import Avatar from "../components/Avatar";
 import backArrowIcon from "../assets/icons/Back_Arrow.svg";
 import lisbonCover from "../assets/images/Lisbon.jpg";
-import type { ItineraryItem, Member } from "../store/mockData";
+import { expenseShares } from "../store/balances";
+import type { ExpenseHistoryItem, ItineraryItem, Member } from "../store/mockData";
 
-type Tab = "details" | "group";
+type Tab = "details" | "group" | "cost";
 
 type ItineraryDetailProps = {
   item: ItineraryItem;
@@ -17,35 +18,11 @@ type ItineraryDetailProps = {
   visited: boolean;
   /** Hidden once the dinner is logged — there is nothing left to spend on. */
   showAddExpense: boolean;
+  /** The expense logged against this plan, when there is one. */
+  expense?: ExpenseHistoryItem | null;
   onBack: () => void;
   onAddExpense: () => void;
 };
-
-const TABS: { key: Tab; label: string }[] = [
-  { key: "details", label: "Details" },
-  { key: "group", label: "Group" },
-];
-
-/**
- * Every plan shares the trip's cover photo, so each one gets its own colour
- * wash over the top. Picked from the id rather than stored on the item, which
- * means a plan added in the editor is tinted too instead of falling back to a
- * flat grey card.
- */
-const TINTS = [
-  "20,80,120",
-  "120,40,90",
-  "18,110,100",
-  "140,70,30",
-  "60,50,130",
-  "150,45,60",
-];
-
-function tintFor(id: string) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  return TINTS[hash % TINTS.length];
-}
 
 function Stat({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
@@ -64,15 +41,26 @@ export default function ItineraryDetail({
   allMembers,
   visited,
   showAddExpense,
+  expense,
   onBack,
   onAddExpense,
 }: ItineraryDetailProps) {
   const [tab, setTab] = useState<Tab>("details");
-  const tabIndex = TABS.findIndex((t) => t.key === tab);
+
+  // The Cost tab only appears for plans money was actually spent on, rather
+  // than sitting there empty on the ones nobody paid for.
+  const tabs: { key: Tab; label: string }[] = [
+    { key: "details", label: "Details" },
+    ...(expense ? [{ key: "cost" as Tab, label: "Cost" }] : []),
+    { key: "group", label: "Group" },
+  ];
+  const tabIndex = Math.max(0, tabs.findIndex((t) => t.key === tab));
+
+  const shares = expense ? expenseShares(expense, memberIds) : null;
+  const payer = expense ? allMembers[expense.paidById] : null;
 
   const title = resolvedTitle ?? item.title;
   const members = memberIds.map((id) => allMembers[id]).filter(Boolean);
-  const tint = tintFor(item.id);
   const allDay = item.time === "Free day";
 
   // Search the place rather than the plan's name: "Fado night" finds nothing
@@ -94,11 +82,6 @@ export default function ItineraryDetail({
         {/* hero */}
         <div className="relative w-full shrink-0" style={{ height: 290 }}>
           <img src={lisbonCover} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          {/* Flat tint, no gradient. A gradient fading into the page colour
-              landed exactly where the card starts, so the card's white rounded
-              corners sat on cream and read as a straight cut edge. Against the
-              photo at full strength the rounding is legible. */}
-          <div className="absolute inset-0" style={{ background: `rgba(${tint},0.28)` }} />
 
           <button
             onClick={onBack}
@@ -166,15 +149,15 @@ export default function ItineraryDetail({
             <motion.div
               className="absolute top-1 bottom-1 rounded-full bg-teal"
               initial={false}
-              animate={{ left: `calc(${(tabIndex / TABS.length) * 100}% + 4px)` }}
+              animate={{ left: `calc(${(tabIndex / tabs.length) * 100}% + 4px)` }}
               style={{
-                width: `calc(${100 / TABS.length}% - 8px)`,
+                width: `calc(${100 / tabs.length}% - 8px)`,
                 boxShadow:
                   "inset 0 0 0 1.5px rgba(28,37,65,0.3), inset 0 2px 1px rgba(28,37,65,0.25), inset 0 -1px 0px rgba(255,255,255,0.7)",
               }}
               transition={{ duration: 0.35, ease: "easeInOut" }}
             />
-            {TABS.map((t) => (
+            {tabs.map((t) => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
@@ -221,6 +204,65 @@ export default function ItineraryDetail({
                     <span className="font-body font-bold text-teal text-[13px]">Decided by poll</span>
                   </div>
                 )}
+              </motion.div>
+            ) : tab === "cost" && expense && shares && payer ? (
+              <motion.div
+                key="cost"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22, ease: "easeInOut" }}
+              >
+                <h2 className="font-body font-bold text-ink text-[18px]">What it cost</h2>
+                <p className="font-body text-grey-ink text-[13px] mt-0.5">{expense.name}</p>
+
+                <div
+                  className="bg-white rounded-[20px] p-5 mt-3"
+                  style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
+                >
+                  <p className="font-heading font-semibold text-teal text-[32px] leading-tight">
+                    €{expense.amount.toFixed(2)}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Avatar member={payer} size={24} />
+                    <p className="font-body text-grey-ink text-[13px]">
+                      Paid by <span className="font-bold text-ink">{payer.name}</span>
+                      {payer.isYou ? " (You)" : ""}
+                    </p>
+                  </div>
+
+                  <p className="font-body font-bold text-grey-ink text-[11px] uppercase tracking-wide mt-5 mb-2.5">
+                    Split {shares.size} ways
+                  </p>
+                  <div className="flex flex-col">
+                    {members.map((m, i) => {
+                      const cents = shares.get(m.id);
+                      return (
+                        <div
+                          key={m.id}
+                          className={`flex items-center gap-3 py-2.5 ${i > 0 ? "border-t border-[#EDE7DA]" : ""}`}
+                          style={{ opacity: cents ? 1 : 0.45 }}
+                        >
+                          <Avatar member={m} size={32} />
+                          <p className="font-body font-bold text-ink text-[14px] flex-1">
+                            {m.name}
+                            {m.isYou && <span style={{ opacity: 0.5 }}> (You)</span>}
+                          </p>
+                          {cents ? (
+                            <p className="font-body font-bold text-ink text-[14px]">€{(cents / 100).toFixed(2)}</p>
+                          ) : (
+                            /* Someone can sit out a single line on the receipt — the
+                               wine everyone else shared — so say so rather than
+                               showing them a misleading €0.00. */
+                            <span className="font-body font-bold text-coral text-[11px] uppercase tracking-wide">
+                              Not included
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </motion.div>
             ) : (
               <motion.div

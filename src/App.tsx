@@ -300,6 +300,14 @@ function AppInner() {
           allMembers={allMembers}
           visited={savedExpenses.length > 0 || !selectedItineraryItem.pending}
           showAddExpense={!!selectedItineraryItem.pending && savedExpenses.length === 0}
+          expense={
+            // The dinner's expense is created at runtime so it has no id to seed
+            // against; it's whatever Ari just logged. Every other link is
+            // explicit on the plan itself.
+            selectedItineraryItem.pending
+              ? savedExpenses[0] ?? null
+              : expenseList.find((e) => e.id === selectedItineraryItem.expenseId) ?? null
+          }
           onBack={() => goToTrip("itinerary")}
           onAddExpense={() => setScreen("receiptCapture")}
         />

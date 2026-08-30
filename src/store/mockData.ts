@@ -85,6 +85,8 @@ export type ItineraryItem = {
   emoji?: string;
   /** Roughly how long to set aside, when it's known. */
   duration?: string;
+  /** The expense this plan was paid for with, when one was logged against it. */
+  expenseId?: string;
 };
 
 export const itinerary: ItineraryItem[] = [
@@ -95,6 +97,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Check-in — Chiado Apartment",
     subtitle: "Rua do Alecrim",
     emoji: "🔑",
+    expenseId: "e2",
     duration: "1h",
     description:
       "Drop the bags and pick rooms. The place sits a few minutes above Cais do Sodré, so the whole of Chiado and Bairro Alto is walkable from the front door.",
@@ -128,6 +131,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Fado night",
     subtitle: "Alfama",
     emoji: "🎶",
+    expenseId: "e3",
     duration: "2h",
     description:
       "Dinner and live fado in the oldest part of the city. The rooms are small and the singing starts late, so it runs long — no plans after this one.",
@@ -139,6 +143,7 @@ export const itinerary: ItineraryItem[] = [
     title: "Sintra day trip",
     subtitle: "Sintra",
     emoji: "🏰",
+    expenseId: "e4",
     duration: "Full day",
     description:
       "Train out from Rossio, then Pena Palace and the gardens. It's a full day on its feet and the hills are steeper than they look on the map.",

@@ -203,3 +203,29 @@ export function computeRawBalances(
 ): BalanceTxn[] {
   return applySettlements(computePairwiseBalances(expenseList, memberIds), settlements);
 }
+
+/**
+ * What each member's share of a single expense comes to, in whole cents.
+ *
+ * Uses the same largest-remainder split as the balances, so the shares shown
+ * on a plan add up to exactly what the expense cost — splitting in euros here
+ * would drift a cent away from the figure on the receipt.
+ */
+export function expenseShares(
+  expense: ExpenseHistoryItem,
+  memberIds: string[]
+): Map<string, number> {
+  const shares = new Map<string, number>();
+  const items =
+    expense.items && expense.items.length > 0
+      ? expense.items
+      : [{ name: expense.name, amount: expense.amount, category: "other" as const, splitIds: memberIds }];
+
+  for (const item of items) {
+    const participants = item.splitIds.filter((id) => memberIds.includes(id));
+    if (participants.length === 0) continue;
+    const cents = splitCents(Math.round(item.amount * 100), participants.length);
+    participants.forEach((id, i) => shares.set(id, (shares.get(id) ?? 0) + cents[i]));
+  }
+  return shares;
+}
