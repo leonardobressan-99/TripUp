@@ -1016,10 +1016,12 @@ export default function TripDetail({
                 <button
                   onClick={backToBalances}
                   aria-label="Back"
-                  className="absolute top-[64px] left-5 w-9 h-9 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.9)" }}
+                  className="absolute top-[64px] left-5"
                 >
-                  <img src={backArrowIcon} alt="" className="w-6 h-6" />
+                  {/* Bare icon, no wrapping circle — matches ScreenHeader's back
+                      button exactly, instead of doubling into a visible ring
+                      against this photo. */}
+                  <img src={backArrowIcon} alt="" className="w-7 h-7" />
                 </button>
                 <motion.div
                   className="absolute inset-x-0 flex justify-center"

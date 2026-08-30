@@ -94,10 +94,13 @@ export default function ItineraryDetail({
           <button
             onClick={onBack}
             aria-label="Back"
-            className="absolute top-[64px] left-5 w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.9)" }}
+            className="absolute top-[64px] left-5"
           >
-            <img src={backArrowIcon} alt="" className="w-6 h-6" />
+            {/* Bare icon, no wrapping circle — matches ScreenHeader's back
+                button exactly. The SVG already bakes in its own grey disc, so a
+                second circle behind it (as this used to have) doubled up into a
+                visible ring wherever it sat over a busy photo. */}
+            <img src={backArrowIcon} alt="" className="w-7 h-7" />
           </button>
 
           <span
