@@ -94,19 +94,11 @@ export default function ItineraryDetail({
         {/* hero */}
         <div className="relative w-full shrink-0" style={{ height: 290 }}>
           <img src={lisbonCover} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          {/* Two layers rather than one: a dark scrim gives the photo depth and
-              keeps the white controls readable, then the tint colours it. A
-              single coloured gradient just washes the image out pale. */}
-          <div
-            className="absolute inset-0"
-            style={{ background: "linear-gradient(180deg, rgba(18,13,10,0.55) 0%, rgba(18,13,10,0.3) 55%, rgba(18,13,10,0.5) 100%)" }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(180deg, rgba(${tint},0.62) 0%, rgba(${tint},0.42) 40%, rgba(26,19,14,0.5) 72%, #FAF6EE 100%)`,
-            }}
-          />
+          {/* Flat tint, no gradient. A gradient fading into the page colour
+              landed exactly where the card starts, so the card's white rounded
+              corners sat on cream and read as a straight cut edge. Against the
+              photo at full strength the rounding is legible. */}
+          <div className="absolute inset-0" style={{ background: `rgba(${tint},0.28)` }} />
 
           <button
             onClick={onBack}
@@ -143,8 +135,12 @@ export default function ItineraryDetail({
           </motion.div>
         </div>
 
-        {/* title card, lifted over the hero so the two read as one unit */}
-        <div className="px-5 -mt-6">
+        {/* Title card, lifted over the hero so the two read as one unit.
+            Needs its own stacking context: the hero's image is absolutely
+            positioned, and a positioned element paints over a static sibling
+            whatever the DOM order, so without this the photo covers the top of
+            the card and slices the title in half. */}
+        <div className="px-5 -mt-8 relative z-10">
           <div
             className="bg-white rounded-[20px] px-5 pt-5 pb-4"
             style={{ boxShadow: "0 10px 24px rgba(28,37,65,0.08)" }}
