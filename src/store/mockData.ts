@@ -79,18 +79,114 @@ export type ItineraryItem = {
   title: string;
   subtitle?: string;
   pending?: boolean;
+  /** Shown on the plan's detail page. Plans added in-app have none yet. */
+  description?: string;
+  /** Badge over the detail hero. Falls back to a pin for plans added in-app. */
+  emoji?: string;
+  /** Roughly how long to set aside, when it's known. */
+  duration?: string;
 };
 
 export const itinerary: ItineraryItem[] = [
-  { id: "1", day: "Wed, 19 Aug", time: "15:00", title: "Check-in — Chiado Apartment", subtitle: "Rua do Alecrim" },
-  { id: "2", day: "Wed, 19 Aug", time: "20:00", title: "Welcome dinner", subtitle: "Time Out Market" },
-  { id: "3", day: "Thu, 20 Aug", time: "10:00", title: "Belém walking tour" },
-  { id: "4", day: "Thu, 20 Aug", time: "19:30", title: "Fado night", subtitle: "Alfama" },
-  { id: "5", day: "Fri, 21 Aug", time: "09:00", title: "Sintra day trip" },
-  { id: "6", day: "Sat, 22 Aug", time: "11:00", title: "Tram 28 ride" },
-  { id: "7", day: "Sat, 22 Aug", time: "21:00", title: "Bairro Alto bar hop" },
-  { id: "8", day: "Sun, 23 Aug", time: "Free day", title: "Beach at Cascais" },
-  { id: "9", day: "Mon, 24 Aug", time: "19:00", title: "Dinner", pending: true },
+  {
+    id: "1",
+    day: "Wed, 19 Aug",
+    time: "15:00",
+    title: "Check-in — Chiado Apartment",
+    subtitle: "Rua do Alecrim",
+    emoji: "🔑",
+    duration: "1h",
+    description:
+      "Drop the bags and pick rooms. The place sits a few minutes above Cais do Sodré, so the whole of Chiado and Bairro Alto is walkable from the front door.",
+  },
+  {
+    id: "2",
+    day: "Wed, 19 Aug",
+    time: "20:00",
+    title: "Welcome dinner",
+    subtitle: "Time Out Market",
+    emoji: "🍽️",
+    duration: "2h",
+    description:
+      "One hall, dozens of counters — everyone orders what they feel like and the table sorts itself out. Easiest possible first night with a group this size.",
+  },
+  {
+    id: "3",
+    day: "Thu, 20 Aug",
+    time: "10:00",
+    title: "Belém walking tour",
+    subtitle: "Belém",
+    emoji: "🗼",
+    duration: "3-4h",
+    description:
+      "The tower, the monastery and the monument to the discoveries, all within a short walk of each other along the river. Worth queueing for the pastéis at the end.",
+  },
+  {
+    id: "4",
+    day: "Thu, 20 Aug",
+    time: "19:30",
+    title: "Fado night",
+    subtitle: "Alfama",
+    emoji: "🎶",
+    duration: "2h",
+    description:
+      "Dinner and live fado in the oldest part of the city. The rooms are small and the singing starts late, so it runs long — no plans after this one.",
+  },
+  {
+    id: "5",
+    day: "Fri, 21 Aug",
+    time: "09:00",
+    title: "Sintra day trip",
+    subtitle: "Sintra",
+    emoji: "🏰",
+    duration: "Full day",
+    description:
+      "Train out from Rossio, then Pena Palace and the gardens. It's a full day on its feet and the hills are steeper than they look on the map.",
+  },
+  {
+    id: "6",
+    day: "Sat, 22 Aug",
+    time: "11:00",
+    title: "Tram 28 ride",
+    subtitle: "Graça to Estrela",
+    emoji: "🚋",
+    duration: "1h",
+    description:
+      "The classic yellow tram through the old quarters. Board at Graça rather than Martim Moniz and there's a real chance of getting a seat.",
+  },
+  {
+    id: "7",
+    day: "Sat, 22 Aug",
+    time: "21:00",
+    title: "Bairro Alto bar hop",
+    subtitle: "Bairro Alto",
+    emoji: "🍸",
+    duration: "Evening",
+    description:
+      "Narrow streets, tiny bars, everyone drinking outside. Nothing needs booking — pick a street and follow whichever one sounds best.",
+  },
+  {
+    id: "8",
+    day: "Sun, 23 Aug",
+    time: "Free day",
+    title: "Beach at Cascais",
+    subtitle: "Cascais",
+    emoji: "🏖️",
+    duration: "Full day",
+    description:
+      "Forty minutes on the train along the coast. No fixed plan — swim, lunch by the water, and back whenever the group feels like it.",
+  },
+  {
+    id: "9",
+    day: "Mon, 24 Aug",
+    time: "19:00",
+    title: "Dinner",
+    pending: true,
+    emoji: "🍷",
+    duration: "2h",
+    description:
+      "Last night together before everyone flies home. The group voted on where to go, so the winner is booked in for tonight.",
+  },
 ];
 
 export type PollOption = {

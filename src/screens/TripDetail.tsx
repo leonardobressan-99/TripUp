@@ -61,6 +61,7 @@ type TripDetailProps = {
   itinerary: ItineraryItem[];
   dayOptions: string[];
   onEditItinerary: () => void;
+  onOpenItineraryItem: (id: string) => void;
   // True once Ari has logged the dinner, which is the last thing the trip is
   // waiting on — the map then reads every stop as visited.
   tripComplete: boolean;
@@ -207,6 +208,7 @@ export default function TripDetail({
   itinerary,
   dayOptions,
   onEditItinerary,
+  onOpenItineraryItem,
   tripComplete,
 }: TripDetailProps) {
   const [tab, setTab] = useState<Tab>(initialTab ?? "summary");
@@ -613,14 +615,20 @@ export default function TripDetail({
                         }`}
                       >
                         <p className="font-body text-grey-ink text-[13px] w-[64px] shrink-0 pt-0.5">{item.time}</p>
-                        <div>
-                          <p
-                            className={`font-body font-bold text-[15px] ${
-                              item.pending && !pollWinner ? "text-teal" : "text-ink"
-                            }`}
+                        <div className="flex-1 min-w-0">
+                          <button
+                            onClick={() => onOpenItineraryItem(item.id)}
+                            className="text-left w-full flex items-center gap-2"
                           >
-                            {item.pending && pollWinner ? `Last dinner — ${pollWinner.label}` : item.title}
-                          </p>
+                            <p
+                              className={`font-body font-bold text-[15px] ${
+                                item.pending && !pollWinner ? "text-teal" : "text-ink"
+                              }`}
+                            >
+                              {item.pending && pollWinner ? `Last dinner — ${pollWinner.label}` : item.title}
+                            </p>
+                            <img src={chevronIcon} alt="" className="w-3.5 h-3.5 shrink-0 opacity-40" />
+                          </button>
                           {item.pending && pollWinner ? (
                             <>
                               <p className="font-body text-teal text-[13px] mt-0.5">🎉 Decided by poll</p>

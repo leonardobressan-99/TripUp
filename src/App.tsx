@@ -14,6 +14,7 @@ import CreatePoll from "./screens/CreatePoll";
 import PollDetail from "./screens/PollDetail";
 import PollResult from "./screens/PollResult";
 import EditItinerary from "./screens/EditItinerary";
+import ItineraryDetail from "./screens/ItineraryDetail";
 import {
   expenseHistory,
   trips,
@@ -46,7 +47,8 @@ type Screen =
   | "createPoll"
   | "pollDetail"
   | "pollResult"
-  | "editItinerary";
+  | "editItinerary"
+  | "itineraryDetail";
 
 type Tab = "summary" | "itinerary" | "budget";
 
@@ -81,6 +83,7 @@ function AppInner() {
   // leaves the Itinerary tab, so the flag has to live above it.
   const [mapIntroPlayed, setMapIntroPlayed] = useState(false);
   const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>(seedItinerary);
+  const [selectedItineraryId, setSelectedItineraryId] = useState<string | null>(null);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [restaurantName, setRestaurantName] = useState("");
   // Mia has already paid Nic back, which is why that pair shows as settled.
@@ -104,6 +107,7 @@ function AppInner() {
       ? poll.options.reduce((best, o) => (o.voterIds.length > best.voterIds.length ? o : best), poll.options[0])
           ?.label
       : undefined;
+  const selectedItineraryItem = itineraryItems.find((i) => i.id === selectedItineraryId) ?? null;
   const defaultSplitIdsToday = activeParticipantIds(tripMemberIds, memberJoinDates, TODAY_DATE, trip.startDate);
 
   function goToTrip(tab: Tab) {
@@ -263,6 +267,10 @@ function AppInner() {
           itinerary={itineraryItems}
           dayOptions={dayOptions}
           onEditItinerary={() => setScreen("editItinerary")}
+          onOpenItineraryItem={(id) => {
+            setSelectedItineraryId(id);
+            setScreen("itineraryDetail");
+          }}
           tripComplete={savedExpenses.length > 0}
         />
       )}
@@ -276,6 +284,24 @@ function AppInner() {
           onAdd={handleAddItineraryItem}
           onUpdate={handleUpdateItineraryItem}
           onRemove={handleRemoveItineraryItem}
+        />
+      )}
+
+      {screen === "itineraryDetail" && selectedItineraryItem && (
+        <ItineraryDetail
+          key="itineraryDetail"
+          item={selectedItineraryItem}
+          resolvedTitle={
+            selectedItineraryItem.pending && pollWinnerLabel
+              ? `Last dinner — ${pollWinnerLabel}`
+              : undefined
+          }
+          memberIds={tripMemberIds}
+          allMembers={allMembers}
+          visited={savedExpenses.length > 0 || !selectedItineraryItem.pending}
+          showAddExpense={!!selectedItineraryItem.pending && savedExpenses.length === 0}
+          onBack={() => goToTrip("itinerary")}
+          onAddExpense={() => setScreen("receiptCapture")}
         />
       )}
 
